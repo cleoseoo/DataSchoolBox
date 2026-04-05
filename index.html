@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>데이터 표현 SCHOOL BOX</title>
+    <title>데이터 표현 네비게이터</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         /* [소스 1] 기본 테마 컬러 변수 고정 */
@@ -127,8 +127,37 @@
         .catchphrase { font-size: 1.5rem; font-weight: 900; color: #1d1d1f; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .char-circle { display: inline-flex; align-items: center; justify-content: center; width: 2.2rem; height: 2.2rem; border: 2.5px solid var(--apple-blue); border-radius: 50%; background: white; color: var(--apple-blue); font-size: 1.1rem; font-weight: 900; box-shadow: 0 4px 10px rgba(0, 113, 227, 0.1); }
 
-        .roadmap-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .roadmap-item { background: #f8f9fa; border-radius: 16px; padding: 15px 12px; border: 1px solid #eee; transition: 0.2s; cursor: pointer; text-align: left; min-height: 95px; display: flex; flex-direction: column; justify-content: center; }
+        /* ⭐ 지도 펼치기 화살표 디자인 */
+        .expand-arrow {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin-top: 20px; cursor: pointer !important; color: var(--apple-blue);
+            font-weight: 800; font-size: 0.95rem; transition: 0.3s;
+            animation: arrowBounce 2s infinite;
+        }
+        .expand-arrow svg { width: 32px; height: 32px; fill: var(--apple-blue); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-bottom: 4px; }
+        .expand-arrow:hover { color: var(--apple-pink); }
+        .expand-arrow:hover svg { fill: var(--apple-pink); transform: scale(1.1); }
+        
+        /* 화살표가 열렸을 때 (회전) */
+        .expand-arrow.open svg { transform: rotate(180deg); fill: var(--apple-gray); }
+        .expand-arrow.open { color: var(--apple-gray); animation: none; }
+        .expand-arrow.open:hover svg { fill: var(--apple-red); transform: rotate(180deg) scale(1.1); }
+        .expand-arrow.open:hover { color: var(--apple-red); }
+
+        @keyframes arrowBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+            60% { transform: translateY(-4px); }
+        }
+
+        /* 미션 지도 (기본 숨김 처리) */
+        .roadmap-grid { display: none; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+        @keyframes fadeInGrid {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .roadmap-item { background: #f8f9fa; border-radius: 16px; padding: 15px 12px; border: 1px solid #eee; transition: 0.2s; cursor: pointer !important; text-align: left; min-height: 95px; display: flex; flex-direction: column; justify-content: center; }
         .roadmap-item:hover { border-color: var(--apple-blue); background: white; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
         .roadmap-item h4 { margin: 0 0 6px 0; color: var(--apple-blue); font-size: 0.95rem; font-weight: 800; }
         .roadmap-item p { margin: 0; font-size: 0.82rem; color: var(--apple-gray); line-height: 1.5; }
@@ -214,7 +243,12 @@
                 <div class="catchphrase">세상을 움직이는 보이지 않는 힘!</div> <div class="data-circle-box"><span class="char-circle">데</span><span class="char-circle">이</span><span class="char-circle">터</span> 탐정단이 되어볼까요?</div>
                 <p style="font-size:0.95rem; color:var(--apple-gray); font-weight:600; margin-top:5px;">컴퓨터가 정보를 어떻게 표현하는지 단계별 탐정 활동으로 체험해보세요!</p>
 
-                <div class="roadmap-grid">
+                <div class="expand-arrow" id="expandArrow" onclick="toggleRoadmap()">
+                    <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                    <div>전체 미션 지도 보기</div>
+                </div>
+
+                <div class="roadmap-grid" id="roadmapGrid">
                     <div class="roadmap-item" onclick="location.href='가치_개념.html'"><h4>STEP 01. 데이터의 가치</h4><p>기록된 데이터가 자산이 되는 과정을 탐구합니다.</p></div>
                     <div class="roadmap-item" onclick="location.href='비트_개념.html'"><h4>STEP 02. 비트란?</h4><p>디지털 정보의 최소 단위와 표현 원리를 알아봅니다.</p></div>
                     <div class="roadmap-item" onclick="location.href='숫자_개념.html'"><h4>STEP 03. 숫자의 디지털 표현</h4><p>0과 1을 사용하여 숫자를 표현하는 체계를 배웁니다.</p></div>
@@ -270,6 +304,23 @@
         }
         function closeGuide() {
             document.getElementById('guideModal').style.display = 'none';
+        }
+
+        // ⭐ 지도 펼치기/접기 애니메이션 함수
+        function toggleRoadmap() {
+            const grid = document.getElementById('roadmapGrid');
+            const arrow = document.getElementById('expandArrow');
+            
+            if (grid.style.display === 'none' || grid.style.display === '') {
+                grid.style.display = 'grid';
+                grid.style.animation = 'fadeInGrid 0.4s ease-out forwards';
+                arrow.classList.add('open');
+                arrow.querySelector('div').innerText = '미션 지도 숨기기';
+            } else {
+                grid.style.display = 'none';
+                arrow.classList.remove('open');
+                arrow.querySelector('div').innerText = '전체 미션 지도 보기';
+            }
         }
     </script>
 </body>
