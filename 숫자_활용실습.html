@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>비트 베이커리 - 숫자의 디지털 표현</title>
+    <style>
+        /* [오프라인 최적화] 외부 폰트 대신 시스템 폰트 사용 */
+        :root {
+            --bakery-beige: #fdf5e6; /* 밀가루/반죽 색 */
+            --bakery-brown: #8b4513; /* 잘 구워진 빵 색 */
+            --oven-orange: #ff8c00;
+            --apple-blue: #0071e3;
+            --apple-red: #ff3b30;
+            --apple-green: #34c759;
+            --header-dark: #1d4d8c;
+        }
+
+        * { cursor: default !important; box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0; height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f5e6d3 0%, #d2b48c 100%); /* 따뜻한 빵집 배경 */
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* [상단 헤더 & 버튼] */
+        header {
+            background-color: var(--header-dark);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+        }
+
+        .header-title { font-size: 1.2rem; font-weight: 800; }
+
+        .status-controller { display: flex; gap: 10px; }
+        .status-btn {
+            padding: 8px 18px; border-radius: 20px; border: none;
+            font-weight: 800; font-size: 0.9rem; background: #f0f2f5;
+            color: #333; cursor: pointer !important; transition: 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .status-btn:hover { transform: translateY(-2px); filter: brightness(0.9); }
+        .btn-sos { color: var(--apple-red); }
+        .btn-done { color: var(--apple-green); }
+
+        /* [메인 게임 카드] */
+        main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        .bakery-card {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%; max-width: 950px; min-height: 75vh;
+            border-radius: 40px;
+            border: 8px solid #a0522d; /* 나무 테두리 느낌 */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            padding: 40px;
+            display: flex; flex-direction: column; align-items: center;
+            position: relative;
+        }
+
+        .game-info { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .timer-box { font-size: 1.4rem; font-weight: 900; color: #d2691e; }
+        .best-score { font-size: 1rem; font-weight: 700; color: #8b4513; }
+
+        /* 주문판 */
+        .order-display {
+            background: #fff9f0; border: 4px dashed #d2691e;
+            padding: 25px 80px; border-radius: 30px; margin-bottom: 30px;
+            text-align: center;
+        }
+        .order-label { font-size: 0.9rem; font-weight: 800; color: #8b4513; margin-bottom: 5px; }
+        .target-num { font-size: 5.5rem; font-weight: 900; margin: 0; color: #3d1f05; }
+
+        /* 비트 스위치 (쿠키/빵 모양) */
+        .bit-area { display: flex; gap: 10px; margin-bottom: 35px; }
+        .bit-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .bit-btn {
+            width: 75px; height: 100px; border-radius: 20px;
+            background: #e9dcc9; border: 3px solid #c0a080;
+            font-size: 2.2rem; font-weight: 900; color: #a08060;
+            cursor: pointer !important; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 0 #b09070;
+        }
+        .bit-btn.active {
+            background: #d2691e; color: white; border-color: #8b4513;
+            transform: translateY(6px); box-shadow: 0 0 0 #b09070;
+        }
+        .weight { font-size: 1rem; font-weight: 900; color: #8b4513; }
+
+        /* 현재 합계 */
+        .sum-box {
+            font-size: 2rem; font-weight: 900; color: var(--apple-blue);
+            background: #eef2f3; padding: 10px 40px; border-radius: 20px;
+        }
+
+        /* 오버레이 */
+        #overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(253, 245, 230, 0.98);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; border-radius: 32px;
+        }
+        .start-btn {
+            padding: 18px 50px; font-size: 1.8rem; font-weight: 900;
+            background: #d2691e; color: white; border: none;
+            border-radius: 20px; cursor: pointer !important;
+        }
+
+        .success-flash { animation: success 0.4s ease; }
+        @keyframes success { 0% { transform: scale(1); } 50% { transform: scale(1.05); border-color: var(--apple-green); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body id="gameBody">
+
+    <header>
+        <div class="header-title">🧭 데이터 네비게이터 - 숫자의 디지털 표현</div>
+        <div class="status-controller">
+            <button class="status-btn" onclick="location.reload()">초기화</button>
+            <button class="status-btn btn-sos" onclick="setStatus('sos')">🙋‍♂️ SOS 요청</button>
+            <button class="status-btn btn-done" onclick="setStatus('done')">✅ 미션 완료</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="bakery-card" id="gameCard">
+            <div id="overlay">
+                <h1 style="font-size: 3rem; color: #8b4513; margin-bottom: 10px;">🥨 비트 베이커리</h1>
+                <p style="font-weight: 700; color: #a0522d; margin-bottom: 30px;">60초 동안 숫자를 이진수로 구워주세요!</p>
+                <button class="start-btn" onclick="startGame()">영업 시작!</button>
+            </div>
+
+            <div class="game-info">
+                <div class="best-score">🏆 최고 점수: <span id="highScore">0</span></div>
+                <div class="timer-box">⏱️ <span id="timerText">60</span>s</div>
+                <div style="font-weight: 900; color: #d2691e;">SCORE: <span id="currentScore">0</span></div>
+            </div>
+
+            <div class="order-display" id="orderBox">
+                <div class="order-label">고객 주문 번호</div>
+                <h2 class="target-num" id="targetText">?</h2>
+            </div>
+
+            <div class="bit-area">
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 128)">0</div><div class="weight">128</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 64)">0</div><div class="weight">64</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 32)">0</div><div class="weight">32</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 16)">0</div><div class="weight">16</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 8)">0</div><div class="weight">8</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 4)">0</div><div class="weight">4</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 2)">0</div><div class="weight">2</div></div>
+                <div class="bit-box"><div class="bit-btn" onclick="toggleBit(this, 1)">0</div><div class="weight">1</div></div>
+            </div>
+
+            <div class="sum-box">현재 합계: <span id="sumText">0</span></div>
+        </div>
+    </main>
+
+    <script>
+        let score = 0;
+        let timeLeft = 60;
+        let target = 0;
+        let currentSum = 0;
+        let isPlaying = false;
+        let timerId = null;
+
+        let highScore = localStorage.getItem('bitBakeryScore') || 0;
+        document.getElementById('highScore').innerText = highScore;
+
+        function startGame() {
+            isPlaying = true;
+            score = 0;
+            timeLeft = 60;
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('currentScore').innerText = score;
+            nextRound();
+
+            timerId = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerText').innerText = timeLeft;
+                if(timeLeft <= 0) endGame();
+            }, 1000);
+        }
+
+        function toggleBit(btn, val) {
+            if(!isPlaying) return;
+            if(btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                btn.innerText = "0";
+                currentSum -= val;
+            } else {
+                btn.classList.add('active');
+                btn.innerText = "1";
+                currentSum += val;
+            }
+            document.getElementById('sumText').innerText = currentSum;
+            if(currentSum === target) success();
+        }
+
+        function success() {
+            score++;
+            document.getElementById('currentScore').innerText = score;
+            document.getElementById('gameCard').classList.add('success-flash');
+            setTimeout(() => {
+                document.getElementById('gameCard').classList.remove('success-flash');
+                nextRound();
+            }, 400);
+        }
+
+        function nextRound() {
+            target = Math.floor(Math.random() * 255) + 1;
+            document.getElementById('targetText').innerText = target;
+            currentSum = 0;
+            document.getElementById('sumText').innerText = "0";
+            document.querySelectorAll('.bit-btn').forEach(b => {
+                b.classList.remove('active');
+                b.innerText = "0";
+            });
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(timerId);
+            if(score > highScore) {
+                highScore = score;
+                localStorage.setItem('bitBakeryScore', highScore);
+                document.getElementById('highScore').innerText = highScore;
+            }
+            document.getElementById('overlay').style.display = 'flex';
+            document.getElementById('overlay').innerHTML = `
+                <h1 style="color:#d2691e;">🥨 영업 종료!</h1>
+                <p style="font-weight:700; font-size:1.5rem;">최종 구운 빵: ${score}개</p>
+                <button class="start-btn" onclick="location.reload()" style="margin-top:20px;">다시 도전</button>
+            `;
+        }
+
+        function setStatus(status) {
+            const body = document.getElementById('gameBody');
+            body.style.boxShadow = 'none';
+            if(status === 'sos') body.style.boxShadow = 'inset 0 0 0 20px var(--apple-red)';
+            if(status === 'done') body.style.boxShadow = 'inset 0 0 0 20px var(--apple-green)';
+        }
+    </script>
+</body>
+</html>
