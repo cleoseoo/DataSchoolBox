@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>디지털 데이터의 가치 - 개념 탐구</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --header-blue-top: #1d4d8c; --header-blue-bottom: #2a5ba0;
@@ -20,7 +20,12 @@
         ::-webkit-scrollbar-track { background: var(--bg-apple); }
         ::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
 
-        html, body { margin: 0; padding: 0; height: 100%; font-family: 'Inter', sans-serif; background-color: var(--bg-apple); display: flex; flex-direction: column; overflow: hidden; transition: box-shadow 0.5s; cursor: default !important;}
+        html, body { 
+            margin: 0; padding: 0; height: 100%; 
+            font-family: 'Inter', sans-serif; background-color: var(--bg-apple); 
+            display: flex; flex-direction: column; overflow: hidden; 
+            transition: box-shadow 0.5s; cursor: default !important;
+        }
 
         body.status-help { box-shadow: inset 0 0 0 24px var(--apple-red); }
         body.status-done { box-shadow: inset 0 0 0 24px var(--success-green); }
@@ -43,21 +48,14 @@
             border: 1px solid rgba(255, 255, 255, 0.1); border-bottom: none; white-space: nowrap;
         }
         
-        /* ⭐ 상위 메뉴 호버 시 반응(입체감 및 색상) 강화 */
         .menu-item:hover > .menu-link:not(.active) { 
-            background-color: rgba(255, 255, 255, 0.2) !important; /* 살짝 더 밝게 */
-            color: #ffffff !important; 
-            transform: translateY(-2px); /* 살짝 위로 떠오름 */
-            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.1) !important; /* 상단 그림자로 입체감 추가 */
+            background-color: rgba(255, 255, 255, 0.2) !important; color: #ffffff !important; 
+            transform: translateY(-2px); box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.1) !important; 
         }
         
-        /* ⭐ 현재 활성화된 메뉴 탭의 입체감 및 색상 효과 */
         .menu-link.active { 
-            background-color: var(--sky-blue-active) !important; 
-            color: #0369a1 !important; 
-            font-weight: 900 !important; 
-            transform: translateY(-4px); 
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.15) !important; 
+            background-color: var(--sky-blue-active) !important; color: #0369a1 !important; 
+            font-weight: 900 !important; transform: translateY(-4px); box-shadow: 0 -4px 12px rgba(0,0,0,0.15) !important; 
         }
 
         .dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: white; border-radius: 0 0 14px 14px; min-width: 150px; display: none; list-style: none; padding: 10px 0; margin: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 6000; }
@@ -65,11 +63,58 @@
         .dropdown li a { display: block; padding: 10px 15px; color: #1d1d1f; text-decoration: none; font-size: 0.8rem; text-align: center; font-weight: 600; }
         .dropdown li a:hover { background: var(--sky-blue-active); color: #0369a1; }
 
-        main { flex: 1; display: flex; overflow: hidden; position: relative; z-index: 1000; }
-        .content-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 25px 20px; }
-        .content-card { background: var(--card-white); padding: 30px 40px; border-radius: 28px; width: 100%; max-width: 950px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.04); }
+        main { flex: 1; display: flex; overflow: hidden; position: relative; z-index: 1000; width: 100%; }
+        
+        /* ⭐ 스크롤이 원활하게 작동하도록 컨테이너 속성 수정 */
+        .content-container { 
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; 
+            align-items: center; padding: 30px 20px 100px 20px; /* 하단 여유 공간(100px) 확보 */
+        }
+        
+        /* ⭐ 메인 카드 레이아웃 - 스크롤 잘림 문제 해결 */
+        .content-card { 
+            background: var(--card-white); padding: 35px 40px 45px 40px; border-radius: 28px; 
+            width: 100%; max-width: 950px; position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.04); 
+            min-height: 500px; height: auto; display: flex; flex-direction: column; 
+            flex-shrink: 0; /* 카드가 스크롤 영역에서 찌그러지지 않도록 고정 */
+            margin-bottom: 40px; /* 카드 아래쪽 여백 추가 */
+        }
 
-        .compare-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+        /* ⭐ 비밀번호 잠금 오버레이 */
+        .lock-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); border-radius: 28px;
+            z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; transition: opacity 0.5s ease;
+        }
+        .lock-box {
+            background: rgba(255,255,255,0.1); padding: 40px; border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.2); text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .lock-icon { font-size: 3.5rem; margin-bottom: 15px; animation: floatLock 3s ease-in-out infinite; }
+        @keyframes floatLock { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        .lock-input {
+            padding: 12px 20px; font-size: 1.5rem; font-weight: 900; border-radius: 12px;
+            border: 2px solid transparent; outline: none; text-align: center; margin-top: 20px; width: 180px;
+            font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,0.9); color: var(--apple-blue);
+            transition: 0.3s;
+        }
+        .lock-input:focus { border-color: var(--apple-blue); box-shadow: 0 0 15px rgba(0,113,227,0.5); }
+        .lock-btn {
+            padding: 12px 25px; font-size: 1.1rem; font-weight: 900; border-radius: 12px;
+            border: none; background: var(--apple-blue); color: white; margin-top: 20px;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,113,227,0.4);
+        }
+        .lock-btn:hover { background: #005bb5; transform: translateY(-2px); }
+
+        /* 페이징(전환) 컨테이너 스타일 */
+        .step-container { width: 100%; transition: opacity 0.4s ease, transform 0.4s ease; flex: 1; }
+        #step1-visual { display: flex; flex-direction: column; justify-content: center; opacity: 1; transform: translateX(0); }
+        #step2-quiz { display: none; opacity: 0; transform: translateX(20px); }
+
+        .compare-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .compare-card { background: white; border-radius: 18px; border: 1.5px solid #eaeaea; box-shadow: 0 8px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; padding: 15px; overflow: hidden; }
         .card-title { font-size: 1rem; font-weight: 800; color: #1d1d1f; text-align: center; margin-bottom: 12px; }
         
@@ -119,30 +164,67 @@
         @keyframes chartGrow { 0% { transform: scaleY(0.5); transform-origin: bottom; } 100% { transform: scaleY(1); transform-origin: bottom; } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
+        /* 아날로그 vs 디지털 개념 요약 영역 */
+        .concept-summary { display: flex; gap: 20px; margin-bottom: 25px; text-align: left; }
+        .summary-item { flex: 1; background: #f9f9fb; padding: 20px; border-radius: 16px; border: 1px solid #eaeaea; }
+        .summary-title { font-weight: 900; font-size: 1.05rem; margin-bottom: 8px; }
+        .summary-desc { font-size: 0.9rem; color: #424245; line-height: 1.6; font-weight: 600; word-break: keep-all;}
+
+        /* 간단한 화살표 버튼 */
+        .expand-arrow {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin-top: 10px; cursor: pointer !important; color: var(--apple-blue);
+            font-weight: 900; font-size: 1.05rem; transition: 0.3s;
+            animation: arrowBounceRight 2s infinite; align-self: center;
+        }
+        .expand-arrow svg { width: 36px; height: 36px; fill: var(--apple-blue); transition: 0.4s; margin-bottom: 4px; }
+        .expand-arrow:hover { color: var(--apple-pink); }
+        .expand-arrow:hover svg { fill: var(--apple-pink); transform: translateX(5px); }
+
+        @keyframes arrowBounceRight {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(0); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(4px); }
+        }
+        
+        /* 퀴즈 화면 이전 단계 버튼 */
+        .prev-step-btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            margin-bottom: 20px; color: var(--apple-gray); font-weight: 700;
+            cursor: pointer !important; transition: 0.2s; font-size: 0.95rem;
+            align-self: flex-start;
+        }
+        .prev-step-btn:hover { color: var(--apple-blue); transform: translateX(-3px); }
+
+
         .word-score-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; width: 100%; }
         .inline-tip { background: white; color: var(--apple-blue); border: 1.5px solid var(--apple-blue); padding: 8px 16px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer !important; transition: 0.2s; }
         .word-bank { background: #f1f7ff; border: 1.5px solid var(--apple-blue); padding: 15px 25px; border-radius: 18px; display: flex; gap: 15px; flex: 1; justify-content: center; flex-wrap: wrap; }
         
-        .word-item { background: white; padding: 6px 18px; border-radius: 10px; font-weight: 800; color: var(--apple-blue); font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: grab !important; }
+        .word-item { background: white; padding: 6px 16px; border-radius: 10px; font-weight: 800; color: var(--apple-blue); font-size: 0.9rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: grab !important; }
         .word-item:active { cursor: grabbing !important; }
         
         #scoreBoard { background: var(--apple-pink); color: white; padding: 10px 20px; border-radius: 15px; font-weight: 900; min-width: 120px; text-align: center; }
 
-        .quiz-box { font-size: 1.1rem; line-height: 2.3; color: #424245; font-weight: 600; background: #f9f9fb; padding: 25px 30px; border-radius: 20px; border: 1px solid #e5e5e7; margin-bottom: 20px; text-align: left; }
+        .quiz-box { font-size: 1.05rem; line-height: 2.2; color: #424245; font-weight: 600; background: #f9f9fb; padding: 20px 30px; border-radius: 20px; border: 1px solid #e5e5e7; margin-bottom: 15px; text-align: left; }
         
+        /* ⭐ 빈칸(네모 상자) 디자인 및 넓이 완벽 수정 (원래 코드대로 깔끔하게 복구) */
         .blank { 
             box-sizing: border-box;
-            display: inline-block; width: 100px; height: 38px; 
+            display: inline-block; 
+            width: 110px; /* 정답 길이에 맞게 짧은 길이로 고정 (늘어나지 않음) */
+            height: 38px; 
             background: white; 
             border: 2px dashed rgba(0, 113, 227, 0.4); 
-            border-radius: 12px; vertical-align: middle; padding: 0 5px;
+            border-radius: 8px; /* 더 깔끔한 네모 모서리 */
+            vertical-align: middle; padding: 0 5px;
             text-align: center; line-height: 34px; 
-            font-size: 1.1rem; font-weight: 800; color: var(--apple-blue); 
-            margin: 0 8px; transition: all 0.2s ease; 
+            font-size: 1.05rem; font-weight: 800; color: var(--apple-blue); 
+            margin: 0 6px; transition: all 0.2s ease; 
             cursor: text !important; 
             outline: none;
         }
-        .blank:focus { border-color: var(--apple-blue); box-shadow: 0 0 8px rgba(0, 113, 227, 0.2); }
+        .blank:focus { border-color: var(--apple-blue); box-shadow: 0 0 8px rgba(0, 113, 227, 0.2); width: 120px; }
         .blank.correct { background: #e8f5e9; color: var(--success-green); border: 2px solid var(--success-green); box-shadow: none; }
         .blank:disabled { opacity: 1; cursor: default !important; }
         
@@ -173,7 +255,6 @@
     <header>
         <div style="font-size: 0.85rem; font-weight: 600; opacity: 0.9; margin-bottom: 5px;">🔍 디지털 코드의 비밀을 풀어라!</div>
         <h1 class="main-title">데이터 표현 네비게이터</h1>
-
         
         <div class="status-controller">
             <button class="status-btn" onclick="setStatus('normal')">초기화</button>
@@ -199,86 +280,126 @@
             <div class="menu-item"><span class="menu-link">소리의 디지털 표현</span><ul class="dropdown"><li><a href="소리_개념.html">📖 개념 탐구</a></li><li><a href="소리_활용실습.html">🛠️ 활용 실습</a></li></ul></div>
             <div class="menu-item"><span class="menu-link">동영상의 디지털 표현</span><ul class="dropdown"><li><a href="동영상_개념.html">📖 개념 탐구</a></li><li><a href="동영상_활용실습.html">🛠️ 활용 실습</a></li></ul></div>
         </nav>
-
-
     </header>
 
     <main>
         <div class="content-container">
             <div class="content-card">
                 
-                <div class="compare-container">
+                <div class="lock-overlay" id="lockOverlay">
+                    <div class="lock-box">
+                        <div class="lock-icon">🔒</div>
+                        <h2 style="margin: 0 0 10px 0; color: white; font-weight: 900;">기밀 문서 접근 보안</h2>
+                        <p style="font-size: 0.95rem; color: #ddd; margin-bottom: 20px; line-height: 1.6;">
+                            데이터 탐정단 여러분, 이 문서의 보안을 해제하려면<br>
+                            <b style="color:var(--apple-pink)">오늘 날짜(일)를 이진수로 변환</b>하여 입력하세요!
+                        </p>
+                        <input type="text" id="lockInput" class="lock-input" placeholder="예: 101" onkeypress="if(event.key==='Enter') checkPassword()" autocomplete="off">
+                        <br>
+                        <button class="lock-btn" onclick="checkPassword()">보안 시스템 해제</button>
+                    </div>
+                </div>
+
+                <div id="step1-visual" class="step-container">
+                    <div style="font-size: 1.3rem; font-weight: 900; color: var(--apple-blue); margin-bottom: 20px; text-align: center;">아날로그 방식 vs 디지털 방식</div>
                     
-                    <div class="compare-card">
-                        <div class="card-title">1. 복제와 보존</div>
-                        <div class="zone analog-zone">
-                            <span class="zone-label">아날로그 방식</span>
-                            <svg class="analog-doc doc1" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                            <svg class="analog-doc doc2" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                            <svg class="analog-doc doc3" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                            <span class="desc-label">복사할수록 열화/훼손됨</span>
+                    <div class="compare-container">
+                        <div class="compare-card">
+                            <div class="card-title">1. 복제와 보존</div>
+                            <div class="zone analog-zone">
+                                <span class="zone-label">아날로그 방식</span>
+                                <svg class="analog-doc doc1" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                <svg class="analog-doc doc2" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                <svg class="analog-doc doc3" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                <span class="desc-label">복사할수록 열화/훼손됨</span>
+                            </div>
+                            <div class="zone digital-zone">
+                                <span class="zone-label">디지털 방식</span>
+                                <svg class="digital-doc ddoc1" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                <svg class="digital-doc ddoc2" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                <svg class="digital-doc ddoc3" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                <span class="desc-label">원본 손상 없는 무한 복제</span>
+                            </div>
                         </div>
-                        <div class="zone digital-zone">
-                            <span class="zone-label">디지털 방식</span>
-                            <svg class="digital-doc ddoc1" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                            <svg class="digital-doc ddoc2" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                            <svg class="digital-doc ddoc3" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                            <span class="desc-label">원본 손상 없는 무한 복제</span>
+
+                        <div class="compare-card">
+                            <div class="card-title">2. 전송과 공유</div>
+                            <div class="zone analog-zone">
+                                <span class="zone-label">아날로그 방식</span>
+                                <svg class="analog-mail" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                <span class="desc-label">물리적 이동 한계 (느림)</span>
+                            </div>
+                            <div class="zone digital-zone">
+                                <span class="zone-label">디지털 방식</span>
+                                <div class="digital-spark"></div>
+                                <div class="digital-spark"></div>
+                                <div class="digital-spark"></div>
+                                <span class="desc-label">빛의 속도로 즉시 전송</span>
+                            </div>
+                        </div>
+
+                        <div class="compare-card">
+                            <div class="card-title">3. 검색과 분석</div>
+                            <div class="zone analog-zone">
+                                <span class="zone-label">아날로그 방식</span>
+                                <svg class="analog-pile" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM10 9h8v2h-8zm0 3h4v2h-4zm0-6h8v2h-8z"/></svg>
+                                <svg class="analog-mag" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                                <span class="desc-label">수동 검색 및 가공 불가</span>
+                            </div>
+                            <div class="zone digital-zone">
+                                <span class="zone-label">디지털 방식</span>
+                                <svg class="digital-gear" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                                <svg class="digital-chart" viewBox="0 0 24 24"><path d="M3 3v18h18V3H3zm6 14H7v-5h2v5zm4 0h-2v-9h2v9zm4 0h-2V7h2v10z"/></svg>
+                                <span class="desc-label">빠른 검색 및 빅데이터 분석</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="compare-card">
-                        <div class="card-title">2. 전송과 공유</div>
-                        <div class="zone analog-zone">
-                            <span class="zone-label">아날로그 방식</span>
-                            <svg class="analog-mail" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                            <span class="desc-label">물리적 이동 한계 (느림)</span>
+                    <div class="concept-summary">
+                        <div class="summary-item">
+                            <div class="summary-title" style="color:#888;">📼 아날로그 (Analog) 데이터</div>
+                            <div class="summary-desc">소리나 빛 등 연속적으로 변화하는 형태 그대로 기록합니다. 시간이 지나면 훼손되거나, 복사 및 전송을 할 때마다 품질이 떨어지기 쉽습니다.</div>
                         </div>
-                        <div class="zone digital-zone">
-                            <span class="zone-label">디지털 방식</span>
-                            <div class="digital-spark"></div>
-                            <div class="digital-spark"></div>
-                            <div class="digital-spark"></div>
-                            <span class="desc-label">빛의 속도로 즉시 전송</span>
+                        <div class="summary-item">
+                            <div class="summary-title" style="color:var(--apple-blue);">💻 디지털 (Digital) 데이터</div>
+                            <div class="summary-desc">모든 정보를 0과 1(비트)의 불연속적인 숫자로 변환하여 기록합니다. 원본의 손상 없이 영구적으로 보존하고 완벽하게 복제할 수 있습니다.</div>
                         </div>
                     </div>
-
-                    <div class="compare-card">
-                        <div class="card-title">3. 검색과 분석</div>
-                        <div class="zone analog-zone">
-                            <span class="zone-label">아날로그 방식</span>
-                            <svg class="analog-pile" viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zM10 9h8v2h-8zm0 3h4v2h-4zm0-6h8v2h-8z"/></svg>
-                            <svg class="analog-mag" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                            <span class="desc-label">수동 검색 및 가공 불가</span>
-                        </div>
-                        <div class="zone digital-zone">
-                            <span class="zone-label">디지털 방식</span>
-                            <svg class="digital-gear" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
-                            <svg class="digital-chart" viewBox="0 0 24 24"><path d="M3 3v18h18V3H3zm6 14H7v-5h2v5zm4 0h-2v-9h2v9zm4 0h-2V7h2v10z"/></svg>
-                            <span class="desc-label">빠른 검색 및 빅데이터 분석</span>
-                        </div>
+                    
+                    <div class="expand-arrow" onclick="goToStep2()">
+                        <svg viewBox="0 0 24 24"><path d="M8.59,16.59L13.17,12L8.59,7.41L10,6l6,6l-6,6L8.59,16.59z"/></svg>
+                        <div>개념 탐구 (퀴즈로 확인하기)</div>
                     </div>
-
                 </div>
-                <div class="word-score-container">
-                    <div class="inline-tip" onclick="openTipPopup()">💡 팁</div>
-                    <div class="word-bank">
-                        <div class="word-item" draggable="true" ondragstart="drag(event)">기록</div>
-                        <div class="word-item" draggable="true" ondragstart="drag(event)">이미지</div>
-                        <div class="word-item" draggable="true" ondragstart="drag(event)">숫자</div>
-                        <div class="word-item" draggable="true" ondragstart="drag(event)">원유</div>
-                        <div class="word-item" draggable="true" ondragstart="drag(event)">자산</div>
-                        <div class="word-item" draggable="true" ondragstart="drag(event)">안전</div>
+
+                <div id="step2-quiz" class="step-container">
+                    <div class="prev-step-btn" onclick="goToStep1()">⬅️ 다시 개념 보기</div>
+
+                    <div class="word-score-container">
+                        <div class="inline-tip" onclick="openTipPopup()">💡 팁</div>
+                        <div class="word-bank">
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">아날로그</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">디지털</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">기록</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">이미지</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">숫자</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">원유</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">자산</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">안전</div>
+                        </div>
+                        <div id="scoreBoard">SCORE: <span id="currentScore">0</span></div>
                     </div>
-                    <div id="scoreBoard">SCORE: <span id="currentScore">0</span></div>
+
+                    <div class="quiz-box">1. 소리나 빛처럼 연속적으로 변화하는 형태 그대로 기록하는 방식을 <input type="text" class="blank" data-answer="아날로그" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> 데이터라고 하고, 0과 1의 불연속적인 숫자로 변환하여 기록하는 방식을 <input type="text" class="blank" data-answer="디지털" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> 데이터라고 합니다.</div>
+                    
+                    <div class="quiz-box">2. 우리 주변의 모든 현상을 숫자, 문자, 영상 등으로 남기는 것을 <input type="text" class="blank" data-answer="기록" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off">이라고 합니다.</div>
+                    <div class="quiz-box">3. 데이터는 우리 주변의 현상을 숫자, 문자, <input type="text" class="blank" data-answer="이미지" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off">, 영상 등으로 표현한 것입니다. <button class="hint-btn" onclick="toggleHint(this, '그림이나 사진 정보를 말해요!')">힌트 💡</button><span class="hint-display"></span></div>
+                    <div class="quiz-box">4. 디지털 데이터는 현실의 정보를 컴퓨터가 인식하도록 <input type="text" class="blank" data-answer="숫자" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> 형태로 변환한 것입니다. <button class="hint-btn" onclick="toggleHint(this, '0과 1로 처리되는 값이에요!')">힌트 💡</button><span class="hint-display"></span></div>
+                    <div class="quiz-box">5. 데이터는 분석을 통해 에너지가 되는 21세기의 <input type="text" class="blank" data-answer="원유" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off">입니다.</div>
+                    <div class="quiz-box">6. 일상 속의 다양한 데이터는 우리 사회를 발전시키는 소중한 <input type="text" class="blank" data-answer="자산" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off">입니다.</div>
+                    <div class="quiz-box" style="margin-bottom: 0;">7. 공공데이터는 시민의 <input type="text" class="blank" data-answer="안전" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off">을 지키기 위해 누구나 자유롭게 활용하도록 개방된 데이터입니다.</div>
                 </div>
 
-                <div class="quiz-box">1. 우리 주변의 모든 현상을 숫자, 문자, 영상 등으로 남기는 것을 <input type="text" class="blank" data-answer="기록" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)">이라고 합니다.</div>
-                <div class="quiz-box">2. 데이터는 우리 주변의 현상을 숫자, 문자, <input type="text" class="blank" data-answer="이미지" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)">, 영상 등으로 표현한 것입니다. <button class="hint-btn" onclick="toggleHint(this, '그림이나 사진 정보를 말해요!')">힌트 💡</button><span class="hint-display"></span></div>
-                <div class="quiz-box">3. 디지털 데이터는 현실의 정보를 컴퓨터가 인식하도록 <input type="text" class="blank" data-answer="숫자" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)"> 형태로 변환한 것입니다. <button class="hint-btn" onclick="toggleHint(this, '0과 1로 처리되는 값이에요!')">힌트 💡</button><span class="hint-display"></span></div>
-                <div class="quiz-box">4. 데이터는 분석을 통해 에너지가 되는 21세기의 <input type="text" class="blank" data-answer="원유" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)">입니다.</div>
-                <div class="quiz-box">5. 일상 속의 다양한 데이터는 우리 사회를 발전시키는 소중한 <input type="text" class="blank" data-answer="자산" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)">입니다.</div>
-                <div class="quiz-box">6. 공공데이터는 시민의 <input type="text" class="blank" data-answer="안전" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)">을 지키기 위해 누구나 자유롭게 활용하도록 개방된 데이터입니다.</div>
             </div>
         </div>
 
@@ -297,12 +418,10 @@
 
     <div class="modal-overlay" id="modalOverlay"><div class="modal-content" id="modalContent"></div></div>
 
-  
    <footer>
         <div style="font-weight: 700; color: #1d1d1f;">데이터 네비게이터🧭</div>
         <div style="color: var(--apple-gray);">&copy; 중학교 정보 - 데이터 표현</div>
     </footer>
-
 
     <script>
         // --- 교실 상태 알림판 ---
@@ -312,22 +431,81 @@
             if(status === 'done') document.body.classList.add('status-done');
         }
 
+        // ⭐ 비밀번호 체크 기능 (오늘 날짜의 일(Day)을 이진수로 변환)
+        const today = new Date().getDate(); 
+        const secretCode = today.toString(2); 
+        
+        function checkPassword() {
+            const inputVal = document.getElementById('lockInput').value.trim();
+            if(inputVal === secretCode) {
+                const overlay = document.getElementById('lockOverlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 500); 
+            } else {
+                alert(`접근 거부! 힌트: 오늘 날짜(${today}일)를 이진수로 변환해 보세요.`);
+                document.getElementById('lockInput').value = '';
+                document.getElementById('lockInput').focus();
+            }
+        }
+
+        // ⭐ 화면 전환 함수 (이미지 -> 퀴즈)
+        function goToStep2() {
+            const step1 = document.getElementById('step1-visual');
+            const step2 = document.getElementById('step2-quiz');
+            
+            step1.style.opacity = '0';
+            step1.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+                setTimeout(() => {
+                    step2.style.opacity = '1';
+                    step2.style.transform = 'translateX(0)';
+                }, 50);
+            }, 400); 
+        }
+
+        // ⭐ 화면 전환 함수 (퀴즈 -> 이미지)
+        function goToStep1() {
+            const step1 = document.getElementById('step1-visual');
+            const step2 = document.getElementById('step2-quiz');
+            
+            step2.style.opacity = '0';
+            step2.style.transform = 'translateX(20px)';
+            
+            setTimeout(() => {
+                step2.style.display = 'none';
+                step1.style.display = 'flex';
+                setTimeout(() => {
+                    step1.style.opacity = '1';
+                    step1.style.transform = 'translateX(0)';
+                }, 50);
+            }, 400);
+        }
+
+        // ⭐ 총 8개의 빈칸에 맞춰 점수 분배 (100 / 8 = 12.5)
         let score = 0; const scored = new Set();
         
-        // ⭐ 입력 확인 로직 (타이핑이나 드롭 시 실행됨)
         function check(el) {
             if (el.value.trim() === el.getAttribute('data-answer') && !scored.has(el)) {
                 el.classList.add('correct'); 
                 el.disabled = true; // 정답을 맞추면 더 이상 수정 못하게 잠금
                 scored.add(el); 
-                score += 16; 
-                if(score >= 96) score = 100; // 16 * 6 = 96 이므로 마지막엔 100으로 보정
-                document.getElementById('currentScore').innerText = score;
-                if(score === 100) showSuccess();
+                
+                // 점수 누적 (12.5점씩 추가)
+                score += 12.5; 
+                let displayScore = Math.round(score); // 소수점 반올림하여 보여줌
+                if(displayScore >= 99) displayScore = 100; // 오차 보정
+                
+                document.getElementById('currentScore').innerText = displayScore;
+                
+                if(displayScore === 100) showSuccess();
             }
         }
 
-        // ⭐ 드래그 앤 드롭 함수
         function allowDrop(ev) { ev.preventDefault(); }
         
         function drag(ev) { 
