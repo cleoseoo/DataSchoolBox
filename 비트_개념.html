@@ -120,8 +120,10 @@
 
         .dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: white; border-radius: 0 0 14px 14px; min-width: 150px; display: none; list-style: none; padding: 10px 0; margin: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 6000; border: 1px solid rgba(0,0,0,0.05); }
         .menu-item:hover .dropdown { display: block !important; }
+        
+        /* ⭐ 수정된 부분: 하위 메뉴 기본 스타일 및 마우스를 올렸을 때만 색상이 변하도록 수정 */
         .dropdown li a { display: block; padding: 10px 15px; color: var(--text-main); text-decoration: none; font-size: 0.8rem; text-align: center; font-weight: 700; transition: 0.2s;}
-        .dropdown li a:hover { background: var(--menu-active-bg); color: var(--teal-main); }
+        .dropdown li a:hover { background: var(--menu-active-bg); color: var(--teal-main); font-weight: 900; }
 
         main { flex: 1; display: flex; overflow: hidden; position: relative; z-index: 1000; width: 100%; }
         
@@ -306,7 +308,8 @@
         .word-item:hover { transform: translateY(-2px); box-shadow: 0 6px 10px rgba(15, 118, 110, 0.15); border-color: var(--teal-main); }
         .word-item:active { cursor: grabbing !important; }
         
-        #scoreBoard { background: var(--teal-main); color: white; padding: 10px 20px; border-radius: 15px; font-weight: 900; min-width: 120px; text-align: center; box-shadow: 0 4px 10px rgba(15, 118, 110, 0.3);}
+        #scoreBoard { background: var(--teal-main); color: white; padding: 10px 20px; border-radius: 15px; font-weight: 900; min-width: 120px; text-align: center; box-shadow: 0 4px 10px rgba(15, 118, 110, 0.3); transition: transform 0.2s;}
+        #scoreBoard.pulse { transform: scale(1.15); box-shadow: 0 10px 25px rgba(15, 118, 110, 0.5); }
 
         .quiz-box { font-size: 1.05rem; line-height: 2.2; color: var(--text-main); font-weight: 700; background: #fafafa; padding: 25px 30px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 15px; text-align: left; transition: 0.3s; }
         .quiz-box:hover { background: white; border-color: rgba(15, 118, 110, 0.2); box-shadow: 0 5px 15px rgba(15, 118, 110, 0.05); }
@@ -421,7 +424,7 @@
             <div class="menu-item">
                 <span class="menu-link active">비트란?</span>
                 <ul class="dropdown">
-                    <li><a href="비트_개념.html" style="background:var(--menu-active-bg); color:var(--teal-main); font-weight:900;">📖 개념 탐구</a></li>
+                    <li><a href="비트_개념.html">📖 개념 탐구</a></li>
                     <li><a href="비트_활용실습.html">🛠️ 활용 실습</a></li>
                 </ul>
             </div>
@@ -515,7 +518,8 @@
                             </div>
                         </div>
 
-                    </div> </div>
+                    </div> 
+                </div>
 
                 <div id="step2-quiz" class="step-container">
                     <div class="word-score-container">
@@ -680,9 +684,9 @@
             }
         }
 
-        // ⭐ 정답 처리 함수 
+        // ⭐ 정답 처리 함수 수정됨 (총 문제 수 6개로 정확히 변경)
         let correctAnswers = 0; 
-        const totalQuestions = 5; 
+        const totalQuestions = 6; 
         const scored = new Set();
         
         function check(el) {
@@ -693,16 +697,21 @@
                 
                 correctAnswers++;
                 
-                let displayScore = 0;
-                if (correctAnswers === totalQuestions) {
-                    displayScore = 100;
-                } else {
-                    displayScore = Math.floor((correctAnswers / totalQuestions) * 100); 
-                }
-                
+                let displayScore = Math.round((correctAnswers / totalQuestions) * 100); 
                 document.getElementById('currentScore').innerText = displayScore;
                 
-                if(displayScore === 100) showSuccess();
+                // 점수판 펄스 애니메이션 추가
+                const sb = document.getElementById('scoreBoard');
+                if(sb) {
+                    sb.classList.add('pulse');
+                    setTimeout(() => { sb.classList.remove('pulse'); }, 300);
+                }
+                
+                if(displayScore === 100) {
+                    setTimeout(() => {
+                        showSuccess();
+                    }, 500);
+                }
             }
         }
 
@@ -739,9 +748,9 @@
         }
 
         function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
-window.onload = function() {
+        
+        window.onload = function() {
             const wordBank = document.querySelector('.word-bank');
-            // 자식 요소(word-item)들을 무작위 순서로 다시 배치합니다.
             for (let i = wordBank.children.length; i >= 0; i--) {
                 wordBank.appendChild(wordBank.children[Math.random() * i | 0]);
             }
