@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,48 +5,38 @@
     <title>문자의 디지털 표현 - 개념 탐구</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        /* 🎨 텍스트/숫자 챕터 전용 컬러 테마 (스카이 블루 & 오션 블루) */
+        /* 🎨 텍스트/문자 챕터 전용 컬러 테마 (애플 블루 & 오션 블루) 완벽 복구 */
         :root {
             --apple-blue: #0071e3;
-            --sky-blue: #38bdf8; /* 기존 민트 대신 맑은 하늘색 */
-            --ocean-blue: #0284c7; /* 기존 핑크 대신 깊은 바다색 */
-            --gold-yellow: #fcd34d; 
-            --indigo-blue: #6366f1; /* 기존 보라색 대신 인디고 블루 */
+            --apple-blue-hover: #005bb5;
+            --sky-blue: #38bdf8; 
+            --ocean-blue: #0284c7; 
+            --gold-light: #fbbf24; 
+            --indigo-blue: #6366f1; 
             
-            /* 전체 배경: 확실하고 청량한 하늘색 그라데이션 */
             --bg-pastel-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); 
             --card-white: #ffffff; 
-            --lavender-tip-bg: #f0f9ff; 
+            --lavender-tip-bg: #f8fafc; 
             
             --text-main: #1d1d1f;
             --text-sub: #86868b;
-            --apple-gray: #86868b;
             --apple-red: #ff2d55;
-            --sky-blue-active: #e0f2fe; 
-            --overlay: rgba(0, 0, 0, 0.4); 
             --success-green: #10b981;
             
-            --memo-yellow: #fffbeb; 
-            --reflection-bg: #eff6ff; 
+            --menu-active-bg: #e0f2fe; 
+            --overlay: rgba(0, 0, 0, 0.4); 
         }
 
         * { cursor: default !important; box-sizing: border-box; }
         
-        /* ⭐ 투명한 배경과 하늘색 막대바 스크롤바 커스텀 */
         ::-webkit-scrollbar { width: 12px; } 
         ::-webkit-scrollbar-track { background: transparent; } 
         ::-webkit-scrollbar-thumb { 
-            /* 배경의 하늘색 톤에 맞춘 은은한 스카이 블루 */
             background: rgba(125, 211, 252, 0.55); 
-            border-radius: 20px; 
-            border: 3px solid transparent; 
-            background-clip: padding-box; 
+            border-radius: 20px; border: 3px solid transparent; background-clip: padding-box; 
         }
         ::-webkit-scrollbar-thumb:hover { 
-            /* 마우스를 올렸을 때 조금 더 또렷해지는 톤 */
-            background: rgba(56, 189, 248, 0.75); 
-            border: 3px solid transparent; 
-            background-clip: padding-box; 
+            background: rgba(56, 189, 248, 0.75); border: 3px solid transparent; background-clip: padding-box; 
         }
 
         html, body { 
@@ -70,7 +59,7 @@
         body.status-help { box-shadow: inset 0 0 0 40px var(--apple-red); }
         body.status-done { box-shadow: inset 0 0 0 40px var(--success-green); }
 
-        /* ⭐ 세련된 글래스모피즘 헤더 */
+        /* ⭐ 헤더 */
         header { 
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -85,8 +74,7 @@
         
         .main-title { font-size: 1.4rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; color: var(--text-main); cursor: pointer; transition: 0.3s; }
         .main-title:hover { 
-            color: var(--ocean-blue); 
-            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--apple-blue) 100%);
+            background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--sky-blue) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
@@ -100,6 +88,7 @@
         .status-btn.btn-help { color: var(--apple-red); border-color: rgba(255,45,85,0.2); }
         .status-btn.btn-done { color: var(--success-green); border-color: rgba(16, 185, 129, 0.2); }
 
+        /* ⭐ 내비게이션 메뉴 (파란색 테마 및 활성화 색상 복구) */
         nav { margin-top: 15px; display: flex; justify-content: center; gap: 4px; padding-bottom: 0; position: relative; width: 100%; }
         .menu-item { position: relative; display: inline-block; }
         .menu-link {
@@ -109,55 +98,51 @@
             border: 1px solid transparent; border-bottom: none; white-space: nowrap;
         }
         
-        /* ⭐ 숫자 파일과 동일한 파란색 테마로 메뉴 링크 업데이트 */
+        .menu-item:hover > .menu-link:not(.active) { background-color: #f0f9ff !important; color: var(--apple-blue) !important; }
+        
+        /* 선택된 메뉴 디자인 */
         .menu-link.active { 
-            background-color: #e0f2fe !important; 
-            color: #005bb5 !important;            
+            background-color: var(--menu-active-bg) !important; color: var(--apple-blue) !important; 
             font-weight: 900 !important; border-color: rgba(0,0,0,0.05);
             box-shadow: 0 -4px 12px rgba(0, 113, 227, 0.15) !important; 
         }
-        .menu-item:hover > .menu-link:not(.active) { background-color: #f0f9ff !important; color: var(--apple-blue) !important; }
 
         .dropdown { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: white; border-radius: 0 0 14px 14px; min-width: 150px; display: none; list-style: none; padding: 10px 0; margin: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 6000; border: 1px solid rgba(0,0,0,0.05); }
         .menu-item:hover .dropdown { display: block !important; }
-        
-        /* ⭐ 하위 메뉴 기본 스타일 및 마우스를 올렸을 때만 색상이 변하도록 수정 */
-        .dropdown li a { display: block; padding: 10px 15px; color: #1d1d1f; text-decoration: none; font-size: 0.8rem; text-align: center; font-weight: 700; transition: 0.2s; }
-        .dropdown li a:hover { background: #e0f2fe; color: #005bb5; font-weight: 900; }
+        .dropdown li a { display: block; padding: 10px 15px; color: var(--text-main); text-decoration: none; font-size: 0.8rem; text-align: center; font-weight: 700; transition: 0.2s;}
+        .dropdown li a:hover { background: var(--menu-active-bg); color: var(--apple-blue); font-weight: 900; }
 
         main { flex: 1; display: flex; overflow: hidden; position: relative; z-index: 1000; width: 100%; }
         .content-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 30px 20px 100px 20px; }
         
         .content-card { 
-            background: var(--card-white); padding: 40px 45px; border-radius: 28px; 
-            width: 100%; max-width: 980px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.03); 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 40px 45px; border-radius: 28px; 
+            width: 100%; max-width: 1000px; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,0.9); 
             min-height: 500px; height: auto; display: flex; flex-direction: column; 
-            flex-shrink: 0; margin-bottom: 40px; border: 1px solid rgba(0,0,0,0.02);
+            flex-shrink: 0; margin-bottom: 40px; 
         }
 
         /* 비밀번호 잠금 화면 */
         .lock-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.6); backdrop-filter: blur(15px); border-radius: 28px;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(15px); border-radius: 28px;
             z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: var(--text-main); transition: opacity 0.5s ease;
         }
-        .lock-box { background: white; padding: 40px 50px; border-radius: 24px; border: 1px solid rgba(0,0,0,0.05); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .lock-box { background: rgba(255,255,255,0.9); padding: 40px 50px; border-radius: 24px; border: 1px solid rgba(0, 113, 227, 0.2); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .lock-icon { font-size: 3.5rem; margin-bottom: 15px; animation: floatLock 3s ease-in-out infinite; }
         @keyframes floatLock { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        .lock-input { padding: 12px 20px; font-size: 1.5rem; font-weight: 900; border-radius: 12px; border: 2px solid rgba(0,0,0,0.1); outline: none; text-align: center; margin-top: 20px; width: 180px; font-family: 'JetBrains Mono', monospace; background: #f9f9f9; color: var(--apple-blue); transition: 0.3s; }
-        .lock-input:focus { border-color: var(--apple-blue); box-shadow: 0 0 15px rgba(0,113,227,0.2); background: white; transform: translateY(-2px); }
-        .lock-btn { padding: 12px 25px; font-size: 1.1rem; font-weight: 900; border-radius: 12px; border: none; background: var(--apple-blue); color: white; margin-top: 20px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,113,227,0.3); }
-        .lock-btn:hover { background: #005bb5; transform: translateY(-2px); }
+        .lock-input { padding: 12px 20px; font-size: 1.5rem; font-weight: 900; border-radius: 12px; border: 2px solid #dfe6e9; outline: none; text-align: center; margin-top: 20px; width: 180px; font-family: 'JetBrains Mono', monospace; background: #fff; color: var(--apple-blue); transition: 0.3s; }
+        .lock-input:focus { border-color: var(--apple-blue); box-shadow: 0 0 15px rgba(0, 113, 227, 0.2); }
+        .lock-btn { padding: 12px 25px; font-size: 1.1rem; font-weight: 900; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--apple-blue), var(--sky-blue)); color: white; margin-top: 20px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0, 113, 227, 0.3); }
+        .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 113, 227, 0.5); }
 
-        /* ⭐ 5단계 순서 재배치 */
-        .step-container { width: 100%; transition: opacity 0.4s ease, transform 0.4s ease; flex: 1; display: flex; flex-direction: column; }
-        #step1-visual { justify-content: flex-start; opacity: 1; transform: translateX(0); }
-        #step2-concept { display: none; opacity: 0; transform: translateX(20px); }
-        #step3-ascii { display: none; opacity: 0; transform: translateX(20px); }
-        #step4-unicode { display: none; opacity: 0; transform: translateX(20px); }
-        #step5-quiz { display: none; opacity: 0; transform: translateX(20px); }
+        /* ⭐ 스텝 컨테이너 (총 6단계) */
+        .step-container { width: 100%; transition: opacity 0.4s ease, transform 0.4s ease; display: none; opacity: 0; transform: translateX(20px); flex: 1; flex-direction: column; }
+        .step-container.active { display: flex; opacity: 1; transform: translateX(0); }
 
         /* 1단계: 문자 변환기 */
         .slide-section { background: linear-gradient(135deg, #f8fbff 0%, #ebf4ff 100%); border-radius: 22px; padding: 30px; margin-bottom: 25px; border: 1px solid rgba(0,113,227,0.1); box-shadow: inset 0 0 20px rgba(0,113,227,0.03); width: 100%; box-sizing: border-box; text-align: center; }
@@ -180,15 +165,11 @@
         .pop-anim { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block;}
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* ⭐ 인라인 숨김 버튼 (푸른색 테마로 변경 완료) */
+        /* 인라인 숨김 버튼 */
         .inline-reveal-btn { background: linear-gradient(135deg, var(--ocean-blue) 0%, var(--sky-blue) 100%); color: white; border: none; border-radius: 12px; padding: 4px 12px; font-size: 0.95rem; font-weight: 900; cursor: pointer !important; transition: 0.2s; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); vertical-align: baseline; }
         .inline-reveal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(2, 132, 199, 0.4); }
-        
         .inline-reveal-btn.purple { background: linear-gradient(135deg, var(--indigo-blue) 0%, #818cf8 100%); box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3); }
         .inline-reveal-btn.purple:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4); }
-
-        .inline-reveal-btn.mint { background: linear-gradient(135deg, var(--apple-blue) 0%, #38bdf8 100%); box-shadow: 0 4px 10px rgba(0, 113, 227, 0.3); }
-        .inline-reveal-btn.mint:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 113, 227, 0.4); }
 
         /* 개념 상자 */
         .concept-box { background: #fafafa; border: 1px solid rgba(0, 113, 227, 0.1); padding: 25px 30px; border-radius: 20px; margin: 10px 0 20px 0; text-align: left; line-height: 1.9; color: #424245; font-size: 1rem; width: 100%; box-sizing: border-box; font-weight: 600;}
@@ -196,8 +177,8 @@
         .concept-box-title svg { fill: var(--apple-blue); }
         .concept-box strong { color: var(--apple-blue); }
 
-        .tip-box-purple { background: var(--lavender-tip-bg); border: 1.5px solid rgba(99, 102, 241, 0.3); padding: 25px 30px; border-radius: 22px; margin: 10px 0 25px 0; text-align: left; line-height: 1.9; color: var(--indigo-blue); font-size: 1rem; width: 100%; box-sizing: border-box; font-weight: 600;}
-        .tip-box-title { display: flex; align-items: center; gap: 8px; color: var(--indigo-blue); font-weight: 900; font-size: 1.15rem; margin-bottom: 15px; }
+        .tip-box-blue { background: var(--lavender-tip-bg); border: 1.5px solid rgba(0, 113, 227, 0.3); padding: 25px 30px; border-radius: 22px; margin: 10px 0 25px 0; text-align: left; line-height: 1.9; color: #1e293b; font-size: 1rem; width: 100%; box-sizing: border-box; font-weight: 600;}
+        .tip-box-title { display: flex; align-items: center; gap: 8px; color: var(--ocean-blue); font-weight: 900; font-size: 1.15rem; margin-bottom: 15px; }
 
         .step-navigation { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); }
         .nav-arrow { display: inline-flex; align-items: center; gap: 8px; color: var(--apple-blue); font-weight: 900; font-size: 1.05rem; cursor: pointer !important; transition: 0.2s; padding: 10px 15px; border-radius: 12px; }
@@ -208,7 +189,7 @@
         .nav-arrow.next { margin-left: auto; }
         .nav-arrow.prev { margin-right: auto; }
 
-        /* ⭐ 3단계: 전체 아스키코드표 그리드 (이진수 추가) */
+        /* 3단계: 전체 아스키코드표 그리드 */
         .ascii-container { max-height: 440px; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
         .ascii-container::-webkit-scrollbar { width: 6px; }
         .ascii-container::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
@@ -234,15 +215,45 @@
         .reveal-btn.small { padding: 4px 10px; font-size: 0.8rem; }
         .reveal-btn.green { background: var(--apple-blue); padding: 8px 16px; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(0, 113, 227, 0.3); }
         .reveal-btn.green:hover { background: #005bb5; }
-        .reveal-btn.yellow { background: var(--gold-yellow); color: #b06500; box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3); }
-        .reveal-btn.yellow:hover { background: #ffdb4d; color: #d35400;}
 
-        /* ⭐ 5단계: 퀴즈 영역 */
-        .word-score-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 30px; width: 100%; }
-        .word-bank { background: #f0f9ff; border: 1px solid rgba(14, 165, 233, 0.2); padding: 15px 25px; border-radius: 18px; display: flex; gap: 15px; flex: 1; justify-content: center; flex-wrap: wrap; }
-        .word-item { background: white; padding: 6px 16px; border-radius: 10px; font-weight: 800; color: #0284c7; font-size: 0.95rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); cursor: grab !important; transition: 0.2s;}
-        .word-item:hover { transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0,0,0,0.05); }
-        .word-item:active { cursor: grabbing !important; }
+        /* ⭐ 5단계: UTF-8 가변 길이 인코딩 체험 CSS */
+        .utf8-lab { display: flex; flex-direction: column; align-items: center; background: white; border-radius: 20px; padding: 30px; border: 1px solid rgba(0,113,227,0.1); box-shadow: 0 10px 20px rgba(0,0,0,0.03); width: 100%;}
+        .utf8-input-box { display: flex; gap: 10px; align-items: center; margin-bottom: 30px; }
+        .utf8-input { font-size: 2rem; width: 80px; height: 80px; text-align: center; border-radius: 16px; border: 3px solid #d2d2d7; outline: none; font-weight: 900; color: var(--apple-blue); transition: 0.3s;}
+        .utf8-input:focus { border-color: var(--apple-blue); box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15); }
+        .utf8-btn { background: var(--apple-blue); color: white; border: none; padding: 0 25px; height: 80px; border-radius: 16px; font-size: 1.1rem; font-weight: 900; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,113,227,0.3);}
+        .utf8-btn:hover { background: #005bb5; transform: translateY(-2px); }
+        
+        .byte-container { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; min-height: 120px; align-items: center; width: 100%; background: #f8fafc; border-radius: 16px; padding: 20px; border: 1.5px dashed #cbd5e1;}
+        .byte-box { background: var(--ocean-blue); color: white; font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 900; padding: 15px 20px; border-radius: 12px; letter-spacing: 2px; box-shadow: 0 8px 15px rgba(2, 132, 199, 0.3); animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .byte-label { text-align: center; font-weight: 800; font-size: 1.2rem; color: var(--apple-red); margin-top: 15px; display: none;}
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ⭐ 6단계: 퀴즈 영역 */
+        .quiz-controls-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 25px; }
+        .inline-tip { 
+            background: white; color: var(--apple-blue); border: 2px solid var(--apple-blue); 
+            padding: 8px 20px; border-radius: 8px; font-weight: 900; font-size: 0.95rem; 
+            cursor: pointer !important; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .inline-tip:hover { background: var(--apple-blue); color: white; border-radius: 24px; box-shadow: 0 6px 15px rgba(0, 113, 227, 0.3); transform: translateY(-2px); }
+
+        .quiz-timer { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 900; color: var(--apple-blue); background: #f0f9ff; border: 2px solid var(--apple-blue); padding: 8px 18px; border-radius: 14px; box-shadow: inset 0 2px 5px rgba(0, 113, 227, 0.1); }
+        .start-quiz-btn { background: var(--apple-blue); color: white; border: none; border-radius: 14px; padding: 10px 24px; font-size: 1.1rem; font-weight: 900; cursor: pointer !important; box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); transition: 0.2s; }
+        .start-quiz-btn:hover { transform: translateY(-2px); background: #005bb5; box-shadow: 0 6px 20px rgba(0, 113, 227, 0.4); }
+        .reset-timer-btn { background: white; color: var(--apple-red); border: 2px solid var(--apple-red); border-radius: 14px; padding: 10px 20px; font-size: 1.05rem; font-weight: 900; cursor: pointer !important; transition: 0.2s; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.15); }
+        .reset-timer-btn:hover { background: #fef2f2; transform: translateY(-2px); }
+
+        .submit-quiz-btn { background: var(--success-green); color: white; border: none; border-radius: 14px; padding: 15px 40px; font-size: 1.2rem; font-weight: 900; cursor: pointer !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: 0.2s; margin-top: 20px; display: inline-block;}
+        .submit-quiz-btn:hover { transform: translateY(-2px); background: #059669; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
+
+        .word-score-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; width: 100%; }
+        .word-bank { background: #f0f9ff; border: 1px solid rgba(0, 113, 227, 0.2); padding: 15px 25px; border-radius: 18px; display: flex; gap: 15px; flex: 1; justify-content: center; flex-wrap: wrap; transition: 0.3s; }
+        .word-item { background: white; padding: 6px 16px; border-radius: 10px; font-weight: 800; color: var(--ocean-blue); font-size: 0.95rem; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: grab !important; transition: 0.2s;}
+        
+        .quiz-active .word-item:hover { transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 113, 227, 0.15); border-color: var(--apple-blue); }
+        .quiz-active .word-item:active { cursor: grabbing !important; }
         
         .score-board { background: var(--apple-blue); color: white; padding: 12px 28px; border-radius: 18px; font-weight: 900; font-size: 1.3rem; min-width: 140px; text-align: center; box-shadow: 0 6px 15px rgba(0,113,227,0.3); transition: transform 0.2s; flex-shrink: 0; }
         .score-board.pulse { transform: scale(1.15); box-shadow: 0 10px 25px rgba(0,113,227,0.5); }
@@ -250,77 +261,38 @@
         .quiz-box { font-size: 1.05rem; line-height: 2.3; color: var(--text-main); font-weight: 600; background: #fafafa; padding: 25px 30px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.05); margin-bottom: 15px; text-align: left; transition: 0.3s;}
         .quiz-box:hover { background: white; border-color: rgba(0,113,227,0.15); box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
         
-        .blank { box-sizing: border-box; display: inline-block; width: 105px; height: 38px; background: white; border: 2px dashed rgba(0, 113, 227, 0.4); border-radius: 10px; vertical-align: middle; padding: 0 5px; text-align: center; line-height: 34px; font-size: 1.05rem; font-weight: 800; color: var(--apple-blue); margin: 0 6px; transition: all 0.2s ease; cursor: text !important; outline: none; }
-        .blank:focus { border-color: var(--apple-blue); box-shadow: 0 0 8px rgba(0, 113, 227, 0.2); width: 115px;}
-        .blank.correct { background: #e0f2fe; color: var(--ocean-blue); border: 2px solid var(--ocean-blue); box-shadow: none; }
+        .blank { box-sizing: border-box; display: inline-block; width: 105px; height: 38px; background: white; border: 2px dashed rgba(0, 113, 227, 0.4); border-radius: 10px; vertical-align: middle; padding: 0 5px; text-align: center; line-height: 34px; font-size: 1.05rem; font-weight: 800; color: var(--apple-blue); margin: 0 6px; transition: all 0.2s ease; outline: none; }
+        .quiz-active .blank { cursor: text !important; }
+        .quiz-active .blank:focus { border-color: var(--apple-blue); box-shadow: 0 0 8px rgba(0, 113, 227, 0.2); width: 115px;}
+        .blank.correct { background: #e0f2fe; color: var(--ocean-blue); border: 2px solid var(--ocean-blue); box-shadow: none; pointer-events: none; }
         .blank:disabled { opacity: 1; cursor: default !important; }
 
-        /* ⭐ 사이드바 및 모달 (하늘색 테마의 딥 글래스모피즘 적용 완벽 통일) */
-        .sidebar-right { 
-            width: 360px; display: flex; flex-direction: column; flex-shrink: 0; 
-            padding: 30px 0 35px 20px; 
-            gap: 20px; z-index: 1000; 
-            background: transparent; border: none;
-        }
+        .report-btn { background: linear-gradient(135deg, var(--apple-blue), var(--sky-blue)); color: white !important; box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); margin-left: auto; }
+        .report-btn div { color: white !important; }
+        .report-btn:hover { background: linear-gradient(135deg, #005bb5, var(--apple-blue)); color: white; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 113, 227, 0.4); }
+
+        /* ⭐ 사이드바 - 파스텔 블루 유리 질감 통일 */
+        .sidebar-right { width: 360px; display: flex; flex-direction: column; flex-shrink: 0; padding: 30px 0 35px 20px; gap: 20px; z-index: 1000; background: transparent; border: none; }
+        .memo-section, .reflection-section { background: rgba(224, 242, 254, 0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border-radius: 28px 0 0 28px; border: 1px solid rgba(255, 255, 255, 0.7); border-right: none; padding: 25px 30px 25px 25px; display: flex; flex-direction: column; box-shadow: inset 2px 2px 8px rgba(255,255,255,0.6), -10px 10px 30px rgba(0, 113, 227, 0.12); }
+        .memo-section { flex: 0.55; } .reflection-section { flex: 0.45; }
+        .sidebar-title { font-weight: 900; color: #1e1e2f; margin-bottom: 12px; font-size: 1.05rem; }
         
-        .memo-section, .reflection-section { 
-            /* 뽀얀 파스텔 블루 유리 질감 */
-            background: rgba(224, 242, 254, 0.65); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-radius: 28px 0 0 28px; 
-            border: 1px solid rgba(255, 255, 255, 0.7); 
-            border-right: none; 
-            padding: 25px 30px 25px 25px; 
-            display: flex; flex-direction: column; 
-            /* 푸른빛이 너무 튀지 않도록 깊고 차분한 그림자로 수정 */
-            box-shadow: inset 2px 2px 8px rgba(255,255,255,0.6), -10px 10px 30px rgba(0, 113, 227, 0.12); 
-        }
-
-        
-        .memo-section { flex: 0.55; }
-        .reflection-section { flex: 0.45; }
-
-        .sidebar-title {
-            font-weight: 900; 
-            color: #1e1e2f; 
-            margin-bottom: 12px; 
-            font-size: 1.05rem;
-        }
-
-       /* 플레이스홀더 진하기를 400으로 조절 */
-        .memo-area::placeholder, 
-        .reflection-area::placeholder {
-            color: #64748b;
-            font-weight: 400; 
-            opacity: 1; 
-        }
-
-
-        .memo-area { 
-            flex: 1; border: none; background: transparent; resize: none; font-size: 0.95rem; line-height: 1.8; outline: none; 
-            background-image: linear-gradient(rgba(14, 165, 233, 0.25) 1px, transparent 1px); /* 스카이 블루 줄무늬 */
-            background-size: 100% 1.8rem; cursor: text !important; font-family: 'Pretendard', sans-serif;
-            color: #1d1d1f;
-        }
-        .reflection-area { 
-            flex: 1; border: 1px solid rgba(255,255,255,0.9); border-radius: 14px; 
-            /* 소감문 배경 시인성 강화 (더 하얗게) */
-            background: rgba(255, 255, 255, 0.85); 
-            resize: none; padding: 15px; font-size: 0.9rem; line-height: 1.6; outline: none; margin-bottom: 12px; cursor: text !important; font-family: 'Pretendard', sans-serif; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-            transition: 0.3s;
-            color: #1d1d1f;
-        }
-        .reflection-area:focus { background: white; border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2); }
-        .capture-tip { 
-            font-size: 0.75rem; color: var(--apple-blue); font-weight: 800; background: rgba(255,255,255,0.85); 
-            padding: 8px; border-radius: 10px; border: 1px dashed var(--apple-blue); text-align: center; 
-        }
+        .memo-area::placeholder, .reflection-area::placeholder { color: #64748b; font-weight: 400; opacity: 1; }
+        .memo-area { flex: 1; border: none; background: transparent; resize: none; font-size: 0.95rem; line-height: 1.8; outline: none; background-image: linear-gradient(rgba(0, 113, 227, 0.25) 1px, transparent 1px); background-size: 100% 1.8rem; cursor: text !important; font-family: 'Pretendard', sans-serif; color: #1d1d1f; }
+        .reflection-area { flex: 1; border: 1px solid rgba(255,255,255,0.9); border-radius: 14px; background: rgba(255, 255, 255, 0.85); resize: none; padding: 15px; font-size: 0.9rem; line-height: 1.6; outline: none; margin-bottom: 12px; cursor: text !important; font-family: 'Pretendard', sans-serif; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); transition: 0.3s; color: #1d1d1f; }
+        .reflection-area:focus { background: #ffffff; border-color: var(--apple-blue); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15); }
+        .capture-tip { font-size: 0.75rem; color: var(--apple-blue); font-weight: 800; background: rgba(255,255,255,0.85); padding: 8px; border-radius: 10px; border: 1px dashed var(--sky-blue); text-align: center; }
 
         footer { padding: 15px 40px; background: rgba(255,255,255,0.5); color: var(--apple-gray); border-top: 1px solid rgba(0,0,0,0.05); font-size: 0.8rem; font-weight: 600; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 모달 및 커스텀 에러창 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay); backdrop-filter: blur(8px); z-index: 9000; align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 40px; border-radius: 28px; width: 480px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: popUp 0.3s ease-out;}
+        .modal-content { background: white; padding: 40px; border-radius: 28px; width: 680px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.15); animation: popUp 0.3s ease-out;}
         @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .alert-box { background: white; border-radius: 28px; border-color: var(--apple-red) !important; width: 400px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.3) !important; padding: 30px; text-align: center;}
+        .alert-box h3 { color: var(--apple-red); font-size: 1.5rem; margin-top: 0; margin-bottom: 15px; font-weight: 900; }
+        .alert-message { color: var(--text-main); font-size: 1.05rem; line-height: 1.6; margin-bottom: 25px; word-break: keep-all; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -430,21 +402,26 @@
                         <p style="margin:0;">
                             <strong>✅ 아스키코드 (ASCII):</strong> 영어 대소문자, 숫자, 기본 특수문자를 표현하기 위해 만든 <button class="inline-reveal-btn" onclick="revealInline(this, '미국의 표준 약속', 'var(--apple-blue)', '#e0f2fe')">❓ 확인</button>입니다.<br>
                             &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(글자당 1바이트(7~8비트) 사용 / 총 256개 문자 표현 가능)</span><br><br>
-                            <strong>✅ 유니코드 (Unicode):</strong> 전 세계의 모든 언어(한글, 한자 등)와 이모티콘(😊)까지 모두 표현할 수 있도록 용량을 키운 <button class="inline-reveal-btn" onclick="revealInline(this, '국제 표준 약속', '#0284c7', '#e0f2fe')">❓ 확인</button>입니다.<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(글자당 2~4바이트 사용 / 수만 개의 문자 표현 가능)</span>
+                            
+                            <strong>✅ 유니코드 (Unicode):</strong> 전 세계 모든 언어와 기호(이모티콘 등)에 <b>고유한 일련번호</b>를 매겨 놓은 <button class="inline-reveal-btn" onclick="revealInline(this, '국제 표준 번호판(사전)', '#0284c7', '#e0f2fe')">❓ 확인</button>입니다.<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(각 문자마다 고유의 주소값을 가짐. 예: '가' = U+AC00)</span><br><br>
+
+                            <strong>✅ UTF-8:</strong> 유니코드 번호를 컴퓨터가 실제로 저장할 수 있는 <b>이진수로 변환(인코딩)</b>하는 가장 대표적인 방식입니다. <br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;글자의 종류에 따라 <b>1바이트에서 최대 <button class="inline-reveal-btn purple" onclick="revealInline(this, '4바이트(32비트)', 'var(--indigo-blue)', '#e0e7ff')">❓ 확인</button>까지 고무줄처럼 용량을 늘려 쓰기 때문에</b> 전 세계 표준으로 쓰입니다.<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(영어는 1바이트, 한글은 3바이트(24비트), 이모티콘은 4바이트!)</span>
                         </p>
                     </div>
 
-                    <div class="tip-box-purple">
-                        <div class="tip-box-title">
+                    <div class="tip-box-purple" style="background: var(--lavender-tip-bg); border-color: rgba(0, 113, 227, 0.3);">
+                        <div class="tip-box-title" style="color: var(--ocean-blue);">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             한글을 컴퓨터에 저장하는 두 가지 방법!
                         </div>
                         <p style="margin:0;">
                            <strong>🎨 <button class="inline-reveal-btn mint" onclick="revealInline(this, '완성형', '#0071e3', '#e0f2fe')">❓ 확인</button> 코드:</strong> '가', '각', '간' 처럼 <b>이미 완성된 글자 하나하나에 고유한 번호를 붙이는 방식</b>입니다.<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--indigo-blue); font-weight: 500;">(비유: 자주 쓰는 글자만 하나씩 '도장'으로 파놓은 것)</span><br><br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(비유: 자주 쓰는 글자만 하나씩 '도장'으로 파놓은 것)</span><br><br>
                             <strong>🧩 <button class="inline-reveal-btn mint" onclick="revealInline(this, '조합형', '#0071e3', '#e0f2fe')">❓ 확인</button> 코드:</strong> 초성(ㄱ), 중성(ㅏ), 종성(ㄱ) <b>각각에 번호를 부여하고, 이를 조립해서 글자를 만드는 방식</b>입니다.<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--apple-blue); font-weight: 500;">(비유: '레고 블록'처럼 부품을 결합해 모든 글자 조립 가능)</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(비유: '레고 블록'처럼 부품을 결합해 모든 글자 조립 가능)</span>
                         </p>
                     </div>
 
@@ -463,7 +440,7 @@
                 <div id="step3-ascii" class="step-container">
                     <div style="font-size: 1.3rem; font-weight: 900; color: var(--apple-blue); margin-bottom: 10px; text-align: left; padding-left: 10px;">🔥심화 탐구: 전체 아스키코드표 엿보기!</div>
                     <p style="text-align: left; padding-left: 10px; font-size: 0.95rem; color: var(--text-sub); margin-bottom: 20px; font-weight: 600;">
-                        우리가 자주 쓰는 문자들은 어떤 번호를 가지고 있을까요? '❓' 버튼을 마우스로 클릭해서 숨겨진 코드를 찾아보세요!
+                        우리가 자주 쓰는 영어 문자와 기호는 어떤 번호를 가지고 있을까요? '❓' 버튼을 마우스로 클릭해서 숨겨진 코드를 찾아보세요!
                     </p>
 
                     <div class="tip-box-purple" style="margin-bottom: 25px; background: #fafafa; border-color: rgba(0,0,0,0.1);">
@@ -490,7 +467,7 @@
                 <div id="step4-unicode" class="step-container">
                     <div style="font-size: 1.3rem; font-weight: 900; color: var(--apple-blue); margin-bottom: 10px; text-align: left; padding-left: 10px;">🌍 심화 탐구: 유니코드 (Unicode) 맛보기</div>
                     <p style="text-align: left; padding-left: 10px; font-size: 0.95rem; color: var(--text-sub); margin-bottom: 20px; font-weight: 600;">
-                        유니코드는 전 세계의 모든 언어와 이모티콘을 담기 위해 훨씬 큰 번호 체계를 사용합니다. 주로 'U+' 기호가 붙은 16진수 번호를 사용해요!
+                        유니코드는 전 세계의 모든 언어와 이모티콘을 담기 위해 1바이트를 넘어서는 훨씬 큰 번호 체계를 사용합니다. 보통 'U+' 기호가 붙은 16진수 번호로 표기합니다.
                     </p>
 
                     <div class="tip-box-purple" style="background: #f0f9ff; border-color: rgba(14, 165, 233, 0.3);">
@@ -546,39 +523,97 @@
                             <svg viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"/></svg>
                             <div>이전 (아스키코드)</div>
                         </div>
-                        <div class="nav-arrow next" onclick="goToStep('step4-unicode', 'step5-quiz')">
+                        <div class="nav-arrow next" onclick="goToStep('step4-unicode', 'step5-utf8')">
+                            <div>특별 탐구 (UTF-8 인코딩)</div>
+                            <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step5-utf8" class="step-container">
+                    <div style="font-size: 1.3rem; font-weight: 900; color: var(--apple-blue); margin-bottom: 10px; text-align: left; padding-left: 10px;">📦 특별 탐구: UTF-8, 고무줄 상자의 마법!</div>
+                    <p style="text-align: left; padding-left: 10px; font-size: 0.95rem; color: var(--text-sub); margin-bottom: 20px; font-weight: 600;">
+                        UTF-8은 글자의 종류에 따라 <b>1바이트에서 4바이트(상자 1개~4개)</b>까지 용량을 자유자재로 변경하여 저장합니다.<br>
+                        입력창에 <b>영어, 한글, 이모티콘</b>을 각각 하나씩 입력해 보고 상자가 몇 개씩 나오는지 실험해 보세요!
+                    </p>
+
+                    <div class="utf8-lab">
+                        <div class="utf8-input-box">
+                            <input type="text" id="utf8Input" class="utf8-input" maxlength="1" placeholder="A" value="가">
+                            <button class="utf8-btn" onclick="executeUTF8()">UTF-8 변환하기 🚀</button>
+                        </div>
+                        
+                        <div id="byteDisplay" class="byte-container">
+                            <div class="byte-box">11101010</div>
+                            <div class="byte-box" style="animation-delay:0.1s">10110000</div>
+                            <div class="byte-box" style="animation-delay:0.2s">10000000</div>
+                        </div>
+                        <div id="byteInfoText" class="byte-label" style="display: block;">한글은 3바이트(24비트) 상자를 사용합니다!</div>
+                    </div>
+
+                    <div class="step-navigation">
+                        <div class="nav-arrow prev" onclick="goToStep('step5-utf8', 'step4-unicode')">
+                            <svg viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"/></svg>
+                            <div>이전 (유니코드)</div>
+                        </div>
+                        <div class="nav-arrow next" onclick="goToStep('step5-utf8', 'step6-quiz')">
                             <div>개념 확인 (최종 퀴즈)</div>
                             <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
                         </div>
                     </div>
                 </div>
 
-                <div id="step5-quiz" class="step-container">
+                <div id="step6-quiz" class="step-container">
                     <div style="font-size: 1.3rem; font-weight: 900; color: var(--apple-red); margin-bottom: 25px;">🎯 최종 퀴즈: 문자의 디지털 표현 마스터하기!</div>
 
-                    <div class="word-score-container">
-                        <div class="word-bank">
+                    <div class="quiz-controls-row">
+                        <div class="inline-tip" onclick="openTipPopup()">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width:18px; height:18px;"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                            미션 가이드
+                        </div>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <div id="quizTimer" class="quiz-timer">⏱️ 00:00</div>
+                            <button id="startQuizBtn" class="start-quiz-btn" onclick="startQuizTimer()">▶️ 퀴즈 시작</button>
+                            <button id="resetTimerBtn" class="reset-timer-btn" onclick="resetQuiz()">🔄 타이머 초기화</button>
+                        </div>
+                    </div>
+
+                    <div class="word-score-container" style="margin-bottom: 20px;">
+                        <div class="word-bank" id="wordBank" style="opacity: 0.4; pointer-events: none;">
                             <div class="word-item" draggable="true" ondragstart="drag(event)">0</div>
                             <div class="word-item" draggable="true" ondragstart="drag(event)">1</div>
                             <div class="word-item" draggable="true" ondragstart="drag(event)">약속</div>
                             <div class="word-item" draggable="true" ondragstart="drag(event)">아스키코드</div>
                             <div class="word-item" draggable="true" ondragstart="drag(event)">유니코드</div>
+                            <div class="word-item" draggable="true" ondragstart="drag(event)">UTF-8</div>
                             <div class="word-item" draggable="true" ondragstart="drag(event)">완성형</div>
                             <div class="word-item" draggable="true" ondragstart="drag(event)">조합형</div>
                         </div>
-                        <div id="scoreBoard" class="score-board">SCORE: <span id="currentScore">0</span></div>
                     </div>
 
-                    <div class="quiz-box">1. 컴퓨터는 글자를 있는 그대로 기억하지 못하고 오직 <input type="text" class="blank" data-answer="0" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> 과(와) <input type="text" class="blank" data-answer="1" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> 로만 저장합니다.</div>
-                    <div class="quiz-box">2. 따라서 문자를 컴퓨터가 이해할 수 있는 숫자로 바꾸기 위해 미리 정해둔 <input type="text" class="blank" data-answer="약속" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> 이(가) 필요합니다.</div>
-                    <div class="quiz-box">3. 영어 알파벳 대소문자, 특수문자 등을 십진수 번호와 매칭시켜 놓은 미국의 표준 코드를 <input type="text" class="blank" data-answer="아스키코드" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> (이)라고 부릅니다.</div>
-                    <div class="quiz-box">4. 전 세계의 다양한 언어와 이모티콘(😊)까지 표현하기 위해 더 큰 용량으로 만든 국제 표준 코드를 <input type="text" class="blank" data-answer="유니코드" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> (이)라고 합니다.</div>
-                    <div class="quiz-box" style="margin-bottom:0;">5. 한글을 표현할 때, '가', '각' 처럼 글자 전체에 하나의 번호를 부여하는 방식을 <input type="text" class="blank" data-answer="완성형" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> (이)라고 하며, 초성/중성/종성을 각각 결합하는 방식을 <input type="text" class="blank" data-answer="조합형" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off"> (이)라고 합니다.</div>
+                    <div id="quizForm">
+                        <div class="quiz-box">1. 컴퓨터는 문자를 있는 그대로 기억하지 못하고 오직 <input type="text" class="blank" data-answer="0" data-score="15" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> 과(와) <input type="text" class="blank" data-answer="1" data-score="0" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> 로만 저장하므로, 숫자로 바꾸기 위한 <input type="text" class="blank" data-answer="약속" data-score="0" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> 이(가) 필요합니다. <span style="color:var(--apple-red); font-weight:900;">[15점]</span></div>
+                        <div class="quiz-box">2. 영어 대소문자, 숫자, 기본 특수문자를 십진수 번호와 매칭시켜 놓은 미국의 기초 표준 코드를 <input type="text" class="blank" data-answer="아스키코드" data-score="15" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> (이)라고 부릅니다. <span style="color:var(--apple-red); font-weight:900;">[15점]</span></div>
+                        <div class="quiz-box">3. 전 세계의 다양한 언어와 이모티콘(😊)까지 모두 표현하기 위해 훨씬 큰 고유 번호를 부여한 국제 표준 코드표를 <input type="text" class="blank" data-answer="유니코드" data-score="15" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> (이)라고 합니다. <span style="color:var(--apple-red); font-weight:900;">[15점]</span></div>
+                        
+                        <div class="quiz-box">4. [신규] 유니코드 번호를 컴퓨터에 저장하기 위해 글자에 따라 용량을 고무줄처럼 1~4바이트로 조절하여 이진수로 변환(인코딩)하는 방식을 <input type="text" class="blank" data-answer="UTF-8" data-score="15" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> (이)라고 합니다. <span style="color:var(--apple-red); font-weight:900;">[15점]</span></div>
+                        
+                        <div class="quiz-box">5. 한글을 표현할 때, '가', '각' 처럼 글자 하나하나에 고유 번호를 도장 찍듯 부여하는 방식을 <input type="text" class="blank" data-answer="완성형" data-score="20" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> (이)라고 합니다. <span style="color:var(--apple-red); font-weight:900;">[20점]</span></div>
+                        <div class="quiz-box" style="margin-bottom:0;">6. 반면, 한글의 초성/중성/종성에 각각 번호를 부여하고 이를 레고 블록처럼 결합해서 글자를 만드는 방식을 <input type="text" class="blank" data-answer="조합형" data-score="20" oninput="check(this)" ondrop="drop(event)" ondragover="allowDrop(event)" autocomplete="off" disabled> (이)라고 합니다. <span style="color:var(--apple-red); font-weight:900;">[20점]</span></div>
+                    </div>
+
+                    <div style="text-align: center; display: none;" id="submitQuizBtnWrap">
+                        <button class="submit-quiz-btn" onclick="submitQuiz()">✅ 미션 완료 및 채점하기</button>
+                    </div>
 
                     <div class="step-navigation">
-                        <div class="nav-arrow prev" onclick="goToStep('step5-quiz', 'step4-unicode')">
+                        <div class="nav-arrow prev" onclick="goToStep('step6-quiz', 'step5-utf8')">
                             <svg viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"/></svg>
-                            <div>이전 (유니코드)</div>
+                            <div>이전 (UTF-8 인코딩)</div>
+                        </div>
+                        
+                        <div class="nav-arrow report-btn" onclick="downloadReportHTML()">
+                            <div>📄 수업 결과 리포트 저장</div>
                         </div>
                     </div>
                 </div>
@@ -597,14 +632,19 @@
                 <div class="capture-tip">📸 캡처: Win+Shift+S | Mac: Cmd+Shift+4</div>
             </div>
         </aside>
+
     </main>
 
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-content">
-            <div style="font-size:3.5rem; margin-bottom:15px;">🔤✅</div>
-            <h2 style="color:var(--apple-blue); margin-bottom: 15px; font-weight: 900;">문자의 디지털 표현 탐구 성공!</h2>
-            <p style="color: #424245; line-height: 1.6; margin-bottom: 25px;">문자가 아스키코드와 유니코드를 통해 이진수로 변환되는 원리를 완벽히 이해했습니다!<br>우측 상단의 '미션 완료'를 누르고 선생님께 알려주세요!</p>
-            <button onclick="closeModal()" style="width:100%; padding:14px; background:var(--apple-blue); color:white; border:none; border-radius:12px; font-weight:700; cursor:pointer !important;">확인</button>
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+    
+    <div class="modal-overlay" id="customAlertModal" style="z-index: 9999;">
+        <div class="modal-box alert-box">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🚫</div>
+            <h3 id="alertTitle" style="color: var(--apple-red); font-weight: 900; font-size: 1.5rem; margin-top: 0; margin-bottom: 15px;">접근 거부!</h3>
+            <p id="alertMessage" class="alert-message"></p>
+            <button onclick="closeCustomAlert()" style="width: 100%; padding: 12px; background: var(--apple-red); color: white; border: none; border-radius: 12px; font-weight: 900; font-size: 1.1rem; cursor: pointer;">확인</button>
         </div>
     </div>
 
@@ -623,6 +663,17 @@
         const today = new Date().getDate(); 
         const secretCode = today.toString(2); 
         
+        // ⭐ 커스텀 알림(Alert) 로직 
+        function showCustomAlert(title, message) {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerHTML = message;
+            document.getElementById('customAlertModal').style.display = 'flex';
+        }
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').style.display = 'none';
+            document.getElementById('lockInput').focus();
+        }
+
         function checkPassword() {
             const inputVal = document.getElementById('lockInput').value.trim();
             if(inputVal === secretCode) {
@@ -630,18 +681,16 @@
                 overlay.style.opacity = '0';
                 setTimeout(() => { overlay.style.display = 'none'; }, 500); 
             } else {
-                alert(`접근 거부! 힌트: 오늘 날짜(${today}일)를 이진수로 변환해 보세요.`);
+                showCustomAlert("접근 거부!", `힌트: 오늘 날짜(${today}일)를 이진수로 변환해 보세요.`);
                 document.getElementById('lockInput').value = '';
-                document.getElementById('lockInput').focus();
             }
         }
 
-        // ⭐ 공용 스텝 이동 함수
+        // 공용 스텝 이동 함수
         function goToStep(currentId, nextId) {
             const currentStep = document.getElementById(currentId);
             const nextStep = document.getElementById(nextId);
             
-            // ID에서 숫자만 추출하여 진행 방향 결정
             const isNext = parseInt(nextId.match(/\d+/)[0]) > parseInt(currentId.match(/\d+/)[0]);
             
             currentStep.style.opacity = '0';
@@ -650,12 +699,12 @@
             setTimeout(() => {
                 currentStep.style.display = 'none';
                 nextStep.style.display = 'flex';
-                if(nextId.includes('quiz') || nextId.includes('ascii') || nextId.includes('unicode')) nextStep.style.display = 'block'; 
+                if(nextId.includes('quiz') || nextId.includes('ascii') || nextId.includes('unicode') || nextId.includes('utf8')) nextStep.style.display = 'block'; 
                 
                 nextStep.style.opacity = '0';
                 nextStep.style.transform = isNext ? 'translateX(20px)' : 'translateX(-20px)';
                 
-                void nextStep.offsetWidth; // 애니메이션 초기화
+                void nextStep.offsetWidth; 
                 
                 setTimeout(() => {
                     nextStep.style.opacity = '1';
@@ -698,7 +747,7 @@
         // 2단계: 예쁜 인라인 숨김 해제 함수
         function revealInline(btn, text, color, bgColor) {
             const span = document.createElement('span');
-            span.className = 'pop-anim';
+            span.className = 'pop-anim revealed-text';
             span.style.color = color;
             span.style.fontWeight = '900';
             span.style.fontSize = '1.05rem';
@@ -724,12 +773,10 @@
                 let char = String.fromCharCode(i);
                 if(i === 32) char = 'SPACE'; 
                 
-                // 8비트 이진수로 변환 (padStart 사용)
                 let binStr = i.toString(2).padStart(8, '0');
                 let innerHtml = `<div class="ascii-dec">${i}</div><div class="ascii-bin">${binStr}</div>`;
                 
                 if(hiddenDecimals.includes(i)) {
-                    // 물음표 버튼을 그릴 때 십진수와 이진수 정보를 모두 넘겨줍니다.
                     innerHtml = `<button class="reveal-btn small yellow" onclick="revealCode(this, '${i}', '${binStr}', '#1d1d1f')">❓</button>`;
                 }
                 
@@ -742,7 +789,7 @@
             container.innerHTML = html;
         }
 
-        // 공용: 코드 클릭 확인 로직 (유니코드에서도 사용하므로 bin 매개변수 유연하게 처리)
+        // 공용: 코드 클릭 확인 로직
         function revealCode(btn, dec, bin, color) {
             const parent = btn.parentElement;
             let resultHtml = `<div class="ascii-dec pop-anim" style="color: ${color}; font-size: 1.1rem; line-height:1.2;">${dec}</div>`;
@@ -752,60 +799,239 @@
             parent.innerHTML = resultHtml;
         }
 
-        // 5단계: 최종 퀴즈 로직
+        // ⭐ 신규 5단계: UTF-8 인코딩 랩 로직 ⭐
+        function executeUTF8() {
+            const inputVal = document.getElementById('utf8Input').value;
+            const display = document.getElementById('byteDisplay');
+            const infoText = document.getElementById('byteInfoText');
+            display.innerHTML = '';
+            
+            if(!inputVal) {
+                infoText.innerText = "문자를 한 개 입력해주세요!";
+                return;
+            }
+            
+            // TextEncoder를 사용하여 UTF-8 바이트 배열 추출
+            const encoder = new TextEncoder();
+            const view = encoder.encode(inputVal);
+            
+            let html = '';
+            view.forEach((byte, index) => {
+                const binStr = byte.toString(2).padStart(8, '0');
+                html += `<div class="byte-box" style="animation-delay:${index * 0.1}s">${binStr}</div>`;
+            });
+            
+            display.innerHTML = html;
+            
+            // 바이트 수에 따른 설명
+            let bytes = view.length;
+            if(bytes === 1) {
+                infoText.innerHTML = `영문자/숫자는 <span style="color:var(--apple-blue)">1바이트(8비트)</span> 상자를 사용합니다!`;
+            } else if(bytes === 3) {
+                infoText.innerHTML = `한글은 <span style="color:var(--apple-red)">3바이트(24비트)</span> 상자를 사용합니다!`;
+            } else if(bytes === 4) {
+                infoText.innerHTML = `이모티콘은 가장 큰 <span style="color:var(--ocean-blue)">4바이트(32비트)</span> 상자를 사용합니다!`;
+            } else {
+                infoText.innerHTML = `${bytes}바이트 상자를 사용합니다!`;
+            }
+            infoText.style.display = 'block';
+        }
+
+        // ⭐ 6단계 퀴즈 타이머 및 진행 로직 ⭐
+        let timerInterval;
+        let elapsedSeconds = 0;
+        let isQuizStarted = false;
         let score = 0;
+        let correctAnswers = 0; 
+        const totalQuestions = 6; 
         const scored = new Set();
 
+        function startQuizTimer() {
+            isQuizStarted = true;
+            document.getElementById('startQuizBtn').style.display = 'none';
+            document.getElementById('submitQuizBtnWrap').style.display = 'block';
+            
+            document.getElementById('wordBank').style.opacity = '1';
+            document.getElementById('wordBank').style.pointerEvents = 'auto';
+            document.getElementById('quizForm').classList.add('quiz-active');
+            document.querySelectorAll('.blank').forEach(el => {
+                if(!el.classList.contains('correct')) el.disabled = false;
+            });
+
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                const m = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+                const s = String(elapsedSeconds % 60).padStart(2, '0');
+                document.getElementById('quizTimer').innerText = `⏱️ ${m}:${s}`;
+            }, 1000);
+        }
+
+        function resetQuiz() {
+            clearInterval(timerInterval);
+            elapsedSeconds = 0;
+            document.getElementById('quizTimer').innerText = '⏱️ 00:00';
+            isQuizStarted = false;
+            score = 0;
+            correctAnswers = 0;
+            scored.clear();
+
+            document.querySelectorAll('.blank').forEach(el => {
+                el.value = '';
+                el.classList.remove('correct');
+                el.disabled = true;
+            });
+
+            document.getElementById('startQuizBtn').style.display = 'inline-block';
+            document.getElementById('submitQuizBtnWrap').style.display = 'none';
+            document.getElementById('wordBank').style.opacity = '0.4';
+            document.getElementById('wordBank').style.pointerEvents = 'none';
+            document.getElementById('quizForm').classList.remove('quiz-active');
+        }
+
         function check(el) {
+            if (!isQuizStarted) return; 
             if (el.value.trim() === el.getAttribute('data-answer') && !scored.has(el)) {
                 el.classList.add('correct');
                 el.disabled = true; 
                 scored.add(el);
                 
-                score += 14.2857; 
-                let displayScore = Math.round(score);
-                if(displayScore >= 99) displayScore = 100;
-                
-                document.getElementById('currentScore').innerText = displayScore;
-
-                // 점수판 펄스 애니메이션
-                const sb = document.getElementById('scoreBoard');
-                sb.classList.add('pulse');
-                setTimeout(() => { sb.classList.remove('pulse'); }, 300);
-                
-                if (displayScore === 100) {
-                    setTimeout(() => {
-                        document.getElementById('modalOverlay').style.display = 'flex';
-                        setStatus('done'); 
-                    }, 500);
-                }
+                score += parseInt(el.getAttribute('data-score'));
+                correctAnswers++;
             }
         }
 
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.innerText); }
+        function submitQuiz() {
+            if(!isQuizStarted) return;
+            clearInterval(timerInterval); 
+            showSuccess();
+        }
+
+        function allowDrop(ev) { if(isQuizStarted) ev.preventDefault(); }
+        function drag(ev) { if(isQuizStarted) ev.dataTransfer.setData("text", ev.target.innerText); }
         function drop(ev) {
+            if(!isQuizStarted) return;
             ev.preventDefault();
             const data = ev.dataTransfer.getData("text");
             ev.target.value = data;
             check(ev.target);
         }
 
+        function openTipPopup() {
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <h3 style="color:var(--apple-blue);">💡 미션 가이드</h3>
+                <p style="line-height:1.8; text-align:left; padding:0 20px; font-size:1.05rem; word-break:keep-all;">
+                    - <b>[▶️ 퀴즈 시작]</b> 버튼을 누르면 타이머가 켜지고 입력이 가능해집니다.<br>
+                    - 보기 단어를 마우스로 <b>끌어서</b> 빈칸에 넣거나 <b>직접 입력</b>해 보세요.<br>
+                    - 모든 문제를 푼 뒤 화면 하단의 <b>[✅ 미션 완료 및 채점하기]</b> 버튼을 누르면 점수와 풀이 시간이 나옵니다.
+                </p>
+                <button onclick="closeModal()" style="width:100%; padding:14px; background:var(--apple-blue); color:white; border:none; border-radius:12px; font-weight:700; font-size:1.1rem; cursor:pointer; margin-top:10px;">확인</button>
+            `;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        }
+
+        function showSuccess() {
+            const m = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+            const s = String(elapsedSeconds % 60).padStart(2, '0');
+            const finalScore = score; 
+
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <div style="font-size:3rem; margin-bottom:15px;">🔤✅</div>
+                <h2 style="color:var(--apple-blue); margin-bottom:15px;">문자 탐구 완료!</h2>
+                
+                <div style="background:#f0f9ff; border: 1px solid rgba(0, 113, 227, 0.2); padding:15px; border-radius:12px; margin-bottom:20px;">
+                    <p style="margin:5px 0; font-size:1.1rem; font-weight:800;">최종 점수: <span style="color:var(--apple-red); font-size:1.3rem;">${finalScore}점</span></p>
+                    <p style="margin:5px 0; font-size:1.1rem; font-weight:800;">풀이 시간: <span style="color:var(--apple-blue); font-size:1.3rem;">${m}분 ${s}초</span></p>
+                </div>
+
+                <p style="font-size:0.95rem; color:#555; margin-bottom:20px;">문자가 아스키코드와 유니코드를 통해 이진수로 변환되는 원리를 완벽히 이해했습니다!<br>아래 버튼을 눌러 <b>수업 결과 리포트</b>를 저장하세요.</p>
+                
+                <div style="display:flex; gap:10px;">
+                    <button onclick="downloadReportHTML()" style="flex:1; padding:14px; background:var(--apple-blue); color:white; border:none; border-radius:12px; font-weight:900; cursor:pointer; box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3);">📄 리포트 저장 (웹문서)</button>
+                    <button onclick="closeModal()" style="padding:14px 20px; background:#e5e5e7; color:#333; border:none; border-radius:12px; font-weight:700; cursor:pointer;">닫기</button>
+                </div>
+            `;
+            document.getElementById('modalOverlay').style.display = 'flex';
+            setStatus('done'); 
+        }
+
         function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
         
+        // ⭐ HTML 양식으로 수업 리포트 다운로드 기능 ⭐
+        function downloadReportHTML() {
+            const finalScore = score;
+            const memo = document.getElementById('memoInput').value || "작성된 내용이 없습니다.";
+            const reflection = document.getElementById('reflectionInput').value || "작성된 내용이 없습니다.";
+            const dateStr = new Date().toLocaleString('ko-KR');
+            
+            const m = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+            const s = String(elapsedSeconds % 60).padStart(2, '0');
+            const timeStr = isQuizStarted ? `${m}분 ${s}초` : "측정 불가";
+
+            const htmlContent = `
+            <!DOCTYPE html>
+            <html lang="ko">
+            <head>
+                <meta charset="UTF-8">
+                <title>학습 결과 리포트</title>
+                <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800;900&display=swap" rel="stylesheet">
+                <style>
+                    body { font-family: 'Pretendard', sans-serif; background: #f0f9ff; color: #1d1d1f; padding: 40px; line-height: 1.6; }
+                    .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px 50px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 113, 227, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); }
+                    h1 { color: #0071e3; text-align: center; border-bottom: 3px solid #38bdf8; padding-bottom: 20px; font-weight: 900; margin-top: 0;}
+                    .info-box { background: #f8fafc; padding: 25px; border-radius: 16px; margin-bottom: 30px; border: 1px dashed #94a3b8; }
+                    .info-box p { margin: 10px 0; font-size: 1.1rem; font-weight: 600; }
+                    .highlight { color: #0071e3; font-weight: 900; font-size: 1.2rem;}
+                    .score { color: #ef4444; font-weight: 900; font-size: 1.2rem;}
+                    .section { margin-bottom: 35px; }
+                    .section h2 { color: #0284c7; font-size: 1.3rem; margin-bottom: 12px; font-weight: 800; }
+                    .text-box { background: #f0f9ff; padding: 20px; border-radius: 12px; border: 1px solid #e0f2fe; white-space: pre-wrap; font-size: 1.05rem; font-weight: 600; color: #334155;}
+                    .footer { text-align: center; color: #94a3b8; font-size: 0.9rem; margin-top: 40px; font-weight: 600;}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>[데이터 비트박스] 학습 결과 리포트 📋</h1>
+                    <div class="info-box">
+                        <p>▶ 단원명: <span class="highlight">4. 문자의 디지털 표현</span></p>
+                        <p>▶ 일시: <span class="highlight">${dateStr}</span></p>
+                        <p>▶ 퀴즈 점수: <span class="score">${finalScore} 점</span></p>
+                        <p>▶ 퀴즈 풀이 시간: <span class="highlight">${timeStr}</span></p>
+                    </div>
+                    <div class="section">
+                        <h2>📌 학습 메모장</h2>
+                        <div class="text-box">${memo}</div>
+                    </div>
+                    <div class="section">
+                        <h2>🌿 학습 활동 소감</h2>
+                        <div class="text-box">${reflection}</div>
+                    </div>
+                    <div class="footer">본 리포트는 '데이터 비트박스' 시스템에서 자동 생성되었습니다.</div>
+                </div>
+            </body>
+            </html>
+            `;
+
+            const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "문자의_디지털표현_학습결과.html";
+            link.click();
+        }
+
         window.onload = function() {
             const wordBank = document.querySelector('.word-bank');
-            // 자식 요소(word-item)들을 무작위 순서로 다시 배치합니다.
-            for (let i = wordBank.children.length; i >= 0; i--) {
-                wordBank.appendChild(wordBank.children[Math.random() * i | 0]);
+            if(wordBank) {
+                for (let i = wordBank.children.length; i >= 0; i--) {
+                    wordBank.appendChild(wordBank.children[Math.random() * i | 0]);
+                }
             }
 
-            // LocalStorage 자동 저장 및 불러오기 (문자 개념 전용 키 사용)
             const memoInput = document.getElementById('memoInput');
             const reflectionInput = document.getElementById('reflectionInput');
 
             if(memoInput && reflectionInput) {
-                // 1. 저장된 데이터 불러오기 (키값을 value_text_memo로 고유하게 설정)
                 if(localStorage.getItem('value_text_memo')) {
                     memoInput.value = localStorage.getItem('value_text_memo');
                 }
@@ -813,7 +1039,6 @@
                     reflectionInput.value = localStorage.getItem('value_text_reflection');
                 }
 
-                // 2. 입력할 때마다 실시간 저장하기
                 memoInput.addEventListener('input', function() {
                     localStorage.setItem('value_text_memo', this.value);
                 });
