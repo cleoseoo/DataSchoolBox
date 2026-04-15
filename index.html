@@ -5,15 +5,21 @@
     <title>데이터 비트박스 - 메인</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* 🎨 프리미엄 화이트 & 글래스 테마 */
+        /* 🎨 프리미엄 화이트 & 글래스 테마 + 단원별 포인트 컬러 */
         :root {
             --bg-color: #f5f5f7;
             --text-main: #1d1d1f;
             --text-sub: #86868b;
-            --apple-blue: #0071e3;
-            --apple-blue-hover: #005bb5;
             --card-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            
+            /* 테마 컬러 정의 */
+            --theme-mint: #10b981;
+            --theme-mint-light: #d1fae5;
+            --theme-blue: #0071e3;
+            --theme-blue-light: #e0f2fe;
+            --theme-violet: #6c5ce7;
+            --theme-navy: #1e3799;
+            --theme-multi-light: #ede7f6;
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -25,8 +31,8 @@
             font-family: 'Pretendard', 'Inter', sans-serif;
             background-color: var(--bg-color);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(0, 113, 227, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(255, 107, 157, 0.05) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(0, 113, 227, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(108, 92, 231, 0.05) 0px, transparent 50%);
             display: flex; flex-direction: column; overflow-x: hidden;
             color: var(--text-main);
         }
@@ -63,44 +69,78 @@
 
         .hero-section { text-align: center; margin-bottom: 60px; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .hero-title { font-size: 3rem; font-weight: 900; margin: 0 0 15px 0; letter-spacing: -0.05em; }
-        .hero-subtitle { font-size: 1.15rem; font-weight: 600; color: var(--text-sub); margin: 0; }
-        .highlight { color: var(--apple-blue); }
+        .hero-subtitle { font-size: 1.15rem; font-weight: 600; color: var(--text-sub); margin: 0; line-height: 1.5; }
+        .highlight { color: var(--theme-blue); }
 
         /* ⭐ 3개의 기둥 (단원 흐름도) */
         .pillar-container {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
-            width: 100%; max-width: 1100px;
+            width: 100%; max-width: 1150px;
         }
 
         .pillar {
             background: var(--card-bg);
             border: 1px solid white;
             border-radius: 28px; padding: 35px 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
             display: flex; flex-direction: column;
             backdrop-filter: blur(10px);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            position: relative;
+            overflow: hidden;
         }
+        
+        /* 기둥 상단 은은한 컬러 라인 */
+        .pillar::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+            transition: 0.4s; opacity: 0.8;
+        }
+
         .pillar:nth-child(1) { animation-delay: 0.1s; }
         .pillar:nth-child(2) { animation-delay: 0.2s; }
         .pillar:nth-child(3) { animation-delay: 0.3s; }
 
-        .pillar:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(0,113,227,0.08); border-color: rgba(0,113,227,0.1); }
+        /* 테마별 컬러 적용 */
+        .pillar.theme-mint::before { background: var(--theme-mint); }
+        .pillar.theme-mint:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); }
+        .pillar.theme-mint .pillar-header { color: var(--theme-mint); }
+        
+        .pillar.theme-blue::before { background: var(--theme-blue); }
+        .pillar.theme-blue:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(0, 113, 227, 0.08); border-color: rgba(0, 113, 227, 0.2); }
+        .pillar.theme-blue .pillar-header { color: var(--theme-blue); }
+        
+        .pillar.theme-violet::before { background: linear-gradient(90deg, var(--theme-violet), var(--theme-navy)); }
+        .pillar.theme-violet:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(108, 92, 231, 0.08); border-color: rgba(108, 92, 231, 0.2); }
+        .pillar.theme-violet .pillar-header { background: linear-gradient(90deg, var(--theme-violet), var(--theme-navy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .pillar-icon { font-size: 2.5rem; margin-bottom: 20px; }
-        .pillar-header { font-size: 0.85rem; font-weight: 800; color: var(--apple-blue); letter-spacing: 1px; margin-bottom: 5px; }
+        .pillar-icon { font-size: 2.5rem; margin-bottom: 20px; display: inline-block; }
+        .pillar-header { font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
         .pillar-title { font-size: 1.4rem; font-weight: 900; margin: 0 0 10px 0; }
         .pillar-desc { font-size: 0.9rem; font-weight: 600; color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; }
 
-        .step-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .step-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; flex: 1; }
         .step-item {
-            background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.04);
-            padding: 15px; border-radius: 16px; font-weight: 700; font-size: 0.95rem;
+            background: #ffffff; border: 1px solid rgba(0,0,0,0.04);
+            padding: 16px; border-radius: 16px; font-weight: 700; font-size: 0.95rem;
             cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
         }
-        .step-item:hover { background: white; border-color: var(--apple-blue); color: var(--apple-blue); box-shadow: 0 5px 15px rgba(0,113,227,0.08); }
-        .step-num { font-size: 0.75rem; color: var(--text-sub); font-weight: 800; background: white; padding: 4px 8px; border-radius: 6px; margin-right: 10px; border: 1px solid #eee;}
+        .step-num { font-size: 0.75rem; font-weight: 900; padding: 4px 8px; border-radius: 6px; margin-right: 10px; }
+        
+        /* 리스트 아이템 호버 효과 */
+        .pillar.theme-mint .step-item:hover { border-color: var(--theme-mint); color: var(--theme-mint); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
+        .pillar.theme-mint .step-num { background: var(--theme-mint-light); color: #047857; }
+        
+        .pillar.theme-blue .step-item:hover { border-color: var(--theme-blue); color: var(--theme-blue); box-shadow: 0 5px 15px rgba(0, 113, 227, 0.1); }
+        .pillar.theme-blue .step-num { background: var(--theme-blue-light); color: #005bb5; }
+        
+        .pillar.theme-violet .step-item:hover { border-color: var(--theme-violet); color: var(--theme-violet); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.1); }
+        .pillar.theme-violet .step-num { background: var(--theme-multi-light); color: #4527a0; }
+        
+        /* 네이비 색상 포인트 (동영상) */
+        .pillar.theme-violet .step-item.navy-step:hover { border-color: var(--theme-navy); color: var(--theme-navy); box-shadow: 0 5px 15px rgba(30, 55, 153, 0.1); }
+        .pillar.theme-violet .step-item.navy-step .step-num { background: #e8eaf6; color: var(--theme-navy); }
 
         /* ⭐ 저작권 플로팅 아이콘 (우측 하단) */
         .copyright-btn {
@@ -147,11 +187,11 @@
     <main>
         <div class="hero-section">
             <h2 class="hero-title">컴퓨터는 세상을 <span class="highlight">어떻게 이해할까?</span></h2>
-            <p class="hero-subtitle">현실의 정보가 디지털 코드로 변환되는 마법 같은 과정을 탐험해 보세요.</p>
+            <p class="hero-subtitle">올바른 디지털 시민으로 성장하기 위한 첫걸음,<br>현실의 정보가 디지털 코드로 변환되는 마법 같은 과정을 탐구해 보세요.</p>
         </div>
 
         <div class="pillar-container">
-            <div class="pillar">
+            <div class="pillar theme-mint">
                 <div class="pillar-icon">🧱</div>
                 <div class="pillar-header">PART 01. FOUNDATION</div>
                 <h3 class="pillar-title">데이터와 비트</h3>
@@ -168,7 +208,7 @@
                 </ul>
             </div>
 
-            <div class="pillar">
+            <div class="pillar theme-blue">
                 <div class="pillar-icon">🔠</div>
                 <div class="pillar-header">PART 02. NUMBER & TEXT</div>
                 <h3 class="pillar-title">숫자와 문자의 표현</h3>
@@ -185,11 +225,11 @@
                 </ul>
             </div>
 
-            <div class="pillar">
+            <div class="pillar theme-violet">
                 <div class="pillar-icon">🎨</div>
                 <div class="pillar-header">PART 03. MULTIMEDIA</div>
                 <h3 class="pillar-title">멀티미디어의 표현</h3>
-                <p class="pillar-desc">빛의 삼원색과 소리의 파동이 어떻게 디지털 코드가 되어 처리되는지 알아봅니다.</p>
+                <p class="pillar-desc">빛의 삼원색과 소리의 파동, 그리고 시간의 흐름이 어떻게 디지털 코드가 되어 처리되는지 알아봅니다.</p>
                 <ul class="step-list">
                     <li class="step-item" onclick="location.href='이미지_개념.html'">
                         <div><span class="step-num">STEP 5</span> 이미지의 표현</div>
@@ -199,7 +239,7 @@
                         <div><span class="step-num">STEP 6</span> 소리의 표현</div>
                         <span>➔</span>
                     </li>
-                    <li class="step-item" onclick="location.href='동영상_개념.html'">
+                    <li class="step-item navy-step" onclick="location.href='동영상_개념.html'">
                         <div><span class="step-num">STEP 7</span> 동영상의 표현</div>
                         <span>➔</span>
                     </li>
