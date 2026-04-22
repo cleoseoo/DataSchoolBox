@@ -256,7 +256,6 @@
                         border-color 0.4s, box-shadow 0.4s;
             animation: cardIn 0.9s cubic-bezier(0.16,1,0.3,1) both;
             cursor: default;
-            /* 3D tilt prep */
             transform-style: preserve-3d;
         }
         .pillar:nth-child(1){ animation-delay: 0.15s; }
@@ -378,7 +377,7 @@
         .p-violet .step-item:hover { border-color: rgba(191,90,242,0.3); color: var(--violet); box-shadow: 0 0 20px rgba(191,90,242,0.08); }
         .p-violet .step-item.navy-step:hover { border-color: rgba(30,55,153,0.5); color: #748fd8; }
 
-        .step-left { display: flex; align-items: center; gap: 2px; position: relative; z-index: 1; }
+        .step-left { display: flex; align-items: center; gap: 2px; position: relative; z-index: 1; pointer-events: none; }
 
         .step-num {
             font-family: 'JetBrains Mono', monospace;
@@ -405,6 +404,7 @@
             font-size: 0.7rem; opacity: 0.3;
             transition: transform 0.2s ease, opacity 0.2s;
             position: relative; z-index: 1;
+            pointer-events: none;
         }
         .step-item:hover .step-arrow { transform: translateX(5px); opacity: 0.8; }
         .step-item.is-done .step-arrow { opacity: 0.6; }
@@ -487,6 +487,40 @@
         .mbtn.primary:hover { background: rgba(0,245,196,0.25); transform: translateY(-2px); box-shadow: 0 0 20px rgba(0,245,196,0.15); }
 
         /* ════════════════════════════════
+           NEW: CLICK RIPPLE EFFECTS
+        ════════════════════════════════ */
+        .digital-ripple {
+            position: fixed;
+            width: 100px; height: 100px;
+            margin-top: -50px; margin-left: -50px;
+            border-radius: 50%;
+            border: 3px solid;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 30px currentColor, inset 0 0 30px currentColor;
+            animation: rippleBurst 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes rippleBurst {
+            0%   { transform: scale(0.1); opacity: 1; border-width: 10px; }
+            100% { transform: scale(30); opacity: 0; border-width: 1px; }
+        }
+
+        .flash-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+            animation: flashFade 0.4s ease-out forwards;
+        }
+        @keyframes flashFade {
+            0%   { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
+
+        .step-item.is-clicking {
+            transform: scale(0.96) !important;
+            filter: brightness(1.5);
+            transition: transform 0.1s, filter 0.1s;
+        }
+
+        /* ════════════════════════════════
            RESPONSIVE
         ════════════════════════════════ */
         @media (max-width: 1024px) { .pillars { grid-template-columns: repeat(2,1fr); } }
@@ -504,14 +538,12 @@
 </head>
 <body>
 
-<!-- ═══ BG CANVASES ═══ -->
 <canvas id="starCanvas"></canvas>
 <canvas id="gridCanvas"></canvas>
 <canvas id="particleCanvas"></canvas>
 <div class="scanline"></div>
 
 <div id="app">
-<!-- ═══ HEADER ═══ -->
 <header>
     <div class="header-main">
         <div class="header-left">
@@ -527,7 +559,6 @@
     </div>
 </header>
 
-<!-- ═══ MAIN ═══ -->
 <main>
     <div class="hero">
         <div class="hero-chip">✦ Digital Literacy Course</div>
@@ -540,12 +571,11 @@
 
     <div class="pillars">
 
-        <!-- PART 01 -->
         <div class="pillar p-mint">
             <div class="pillar-eyebrow">PART 01 · FOUNDATION</div>
             <div class="pillar-icon">🧱</div>
             <div class="pillar-title">데이터와 비트</div>
-            <p class="pillar-desc">아날로그와 디지털 데이터를 탐구하고, 디지털 데이터의 가치와 비트의 원리를 배웁니다.</p>
+            <p class="pillar-desc">아날로그와 디지털 데이터, 비트의 원리를 탐구합니다.</p>
             <ul class="step-list">
                 <li>
                     <a class="step-item" href="가치_개념.html" data-step="1">
@@ -570,12 +600,11 @@
             </ul>
         </div>
 
-        <!-- PART 02 -->
         <div class="pillar p-blue">
             <div class="pillar-eyebrow">PART 02 · NUMBER &amp; TEXT</div>
             <div class="pillar-icon">🔠</div>
             <div class="pillar-title">숫자와 문자의 표현</div>
-            <p class="pillar-desc">숫자와 문자가 디지털 코드로 처리되는 원리를 탐구합니다.</p>
+            <p class="pillar-desc">숫자, 문자가 디지털 코드로 처리되는 원리를 탐구합니다.</p>
             <ul class="step-list">
                 <li>
                     <a class="step-item" href="숫자_개념.html" data-step="3">
@@ -600,12 +629,11 @@
             </ul>
         </div>
 
-        <!-- PART 03 -->
         <div class="pillar p-violet">
             <div class="pillar-eyebrow">PART 03 · MULTIMEDIA</div>
             <div class="pillar-icon">🎨</div>
             <div class="pillar-title">멀티미디어의 표현</div>
-            <p class="pillar-desc">빛의 삼원색, 소리의 파동, 동영상의 흐름이 디지털 코드로 처리되는 원리를 탐구합니다.</p>
+            <p class="pillar-desc">이미지, 소리, 동영상이 디지털 코드로 처리되는 원리를 탐구합니다.</p>
             <ul class="step-list">
                 <li>
                     <a class="step-item" href="이미지_개념.html" data-step="5">
@@ -644,10 +672,8 @@
 </main>
 </div>
 
-<!-- ═══ COPYRIGHT ═══ -->
 <a href="#" class="copy-btn" id="copyBtn" title="저작권 안내">ⓒ</a>
 
-<!-- ═══ MODAL ═══ -->
 <div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mDesc">
     <div class="modal-box">
         <div class="modal-icon" id="mIcon"></div>
@@ -916,6 +942,44 @@ function openInfoModal(){
     });
 }
 document.getElementById('copyBtn').addEventListener('click',e=>{ e.preventDefault(); openInfoModal(); });
+
+
+/* ══════════════════════════════════════════
+   8. CLICK RIPPLE EFFECT (디지털 시그널 효과)
+══════════════════════════════════════════ */
+document.querySelectorAll('.step-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault(); // 즉시 페이지 이동 방지
+        const targetHref = this.getAttribute('href');
+
+        // 속한 기둥(Pillar)에 따라 파동 색상 결정
+        let rippleColor = 'var(--mint)';
+        if(this.closest('.p-blue')) rippleColor = 'var(--blue)';
+        if(this.closest('.p-violet')) rippleColor = 'var(--violet)';
+
+        // 1. 클릭 위치에서 퍼져나가는 원 생성
+        const ripple = document.createElement('div');
+        ripple.className = 'digital-ripple';
+        ripple.style.color = rippleColor;
+        ripple.style.left = e.clientX + 'px';
+        ripple.style.top = e.clientY + 'px';
+        document.body.appendChild(ripple);
+
+        // 2. 전체 화면 순간 플래시 효과
+        const flash = document.createElement('div');
+        flash.className = 'flash-overlay';
+        flash.style.backgroundColor = rippleColor;
+        document.body.appendChild(flash);
+
+        // 3. 버튼 자체의 클릭 모션
+        this.classList.add('is-clicking');
+
+        // 0.35초(애니메이션 감상 시간) 대기 후 실제 페이지로 이동
+        setTimeout(() => {
+            window.location.href = targetHref;
+        }, 350);
+    });
+});
 </script>
 </body>
 </html>
