@@ -2,177 +2,414 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>데이터 비트박스 - 메인</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* 🎨 프리미엄 화이트 & 글래스 테마 + 단원별 포인트 컬러 */
+        /* ════════════════════════════════════════
+           🎨 테마 변수
+        ════════════════════════════════════════ */
         :root {
-            --bg-color: #f5f5f7;
+            --bg-color: #f0f2f5;
             --text-main: #1d1d1f;
             --text-sub: #86868b;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            
+            --card-bg: rgba(255, 255, 255, 0.9);
+
             --theme-mint: #10b981;
             --theme-mint-light: #d1fae5;
             --theme-blue: #0071e3;
-            --theme-blue-light: #e0f2fe;
+            --theme-blue-light: #dbeafe;
             --theme-violet: #6c5ce7;
             --theme-navy: #1e3799;
             --theme-multi-light: #ede7f6;
         }
 
+        /* ════════════════════════════════════════
+           스크롤바
+        ════════════════════════════════════════ */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #c7c7cc; border-radius: 10px; }
+
+        /* ════════════════════════════════════════
+           기본 레이아웃
+        ════════════════════════════════════════ */
+        *, *::before, *::after { box-sizing: border-box; }
 
         html, body {
             margin: 0; padding: 0; height: 100%;
-            font-family: 'Pretendard', 'Inter', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(0, 113, 227, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(108, 92, 231, 0.05) 0px, transparent 50%);
+            /* 배경 메시 그라디언트 (고급감 향상) */
+            background-image:
+                radial-gradient(ellipse at 0% 0%,   rgba(0, 113, 227, 0.07)  0px, transparent 55%),
+                radial-gradient(ellipse at 100% 0%,  rgba(16, 185, 129, 0.06) 0px, transparent 50%),
+                radial-gradient(ellipse at 100% 100%,rgba(108, 92, 231, 0.07) 0px, transparent 55%);
             display: flex; flex-direction: column; overflow-x: hidden;
             color: var(--text-main);
         }
 
-        /* ⭐ 상단 헤더 */
+        /* 이진수 ambient 배경 캔버스 */
+        #binaryCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; opacity: 0.025;
+        }
+
+        /* ════════════════════════════════════════
+           헤더
+        ════════════════════════════════════════ */
         header {
             position: sticky; top: 0; z-index: 5000;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            padding: 0 40px;
+            display: flex; flex-direction: column;
         }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .target-badge {
-            background: #1d1d1f; color: white; padding: 4px 10px; border-radius: 8px;
-            font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px;
+        .header-main {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 0;
         }
-        .main-title { font-size: 1.4rem; font-weight: 900; margin: 0; letter-spacing: -0.02em; }
+
+        .header-left { display: flex; align-items: center; gap: 14px; }
+
+        .target-badge {
+            background: #1d1d1f; color: white;
+            padding: 4px 11px; border-radius: 8px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        .main-title {
+            font-size: 1.35rem; font-weight: 900; margin: 0;
+            letter-spacing: -0.03em;
+        }
 
         .status-controller { display: flex; gap: 8px; }
+
         .status-btn {
-            padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;
-            border: 1px solid rgba(0,0,0,0.1); background: white; color: var(--text-main);
-            cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            padding: 8px 16px; border-radius: 20px;
+            font-weight: 700; font-size: 0.83rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            border: 1px solid rgba(0,0,0,0.1); background: white;
+            color: var(--text-main); cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
-        .status-btn:hover { background: #fff0f0; border-color: rgba(255, 69, 58, 0.3); color: #ff3b30; transform: translateY(-2px); }
+        .status-btn:hover {
+            background: #fff0f0;
+            border-color: rgba(255, 59, 48, 0.35);
+            color: #ff3b30;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,59,48,0.1);
+        }
 
-        /* ⭐ 메인 콘텐츠 영역 */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; }
+        /* ── 헤더 하단: 전체 진행률 바 ── */
+        .progress-bar-wrap {
+            padding-bottom: 10px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .progress-label {
+            font-size: 0.72rem; font-weight: 700; color: var(--text-sub);
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .progress-segments {
+            display: flex; gap: 4px; flex: 1;
+        }
+        .progress-seg {
+            flex: 1; height: 5px; border-radius: 3px;
+            background: #e5e5ea;
+            transition: background 0.5s ease, transform 0.3s ease;
+        }
+        .progress-seg.done { background: var(--theme-mint); transform: scaleY(1.3); }
+        .progress-count {
+            font-size: 0.72rem; font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--theme-mint);
+            white-space: nowrap;
+        }
 
-        .hero-section { text-align: center; margin-bottom: 60px; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .hero-title { font-size: 3rem; font-weight: 900; margin: 0 0 15px 0; letter-spacing: -0.05em; }
-        .hero-subtitle { font-size: 1.15rem; font-weight: 600; color: var(--text-sub); margin: 0; line-height: 1.5; }
-        .highlight { color: var(--theme-blue); }
+        /* ════════════════════════════════════════
+           메인 콘텐츠
+        ════════════════════════════════════════ */
+        main {
+            flex: 1; position: relative; z-index: 1;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 64px 20px 80px;
+        }
 
-        /* ⭐ 3개의 기둥 (단원 흐름도) */
-        .pillar-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1150px; }
+        /* ── Hero ── */
+        .hero-section {
+            text-align: center; margin-bottom: 56px;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 2.5px;
+            color: var(--theme-blue); text-transform: uppercase;
+            background: var(--theme-blue-light); padding: 5px 12px; border-radius: 20px;
+            margin-bottom: 18px;
+        }
+
+        .hero-title {
+            font-size: 3rem; font-weight: 900;
+            margin: 0 0 16px; letter-spacing: -0.05em;
+            line-height: 1.15;
+        }
+
+        /* 타이핑 커서 효과 */
+        .typed-text { color: var(--theme-blue); }
+        .typed-cursor {
+            display: inline-block; width: 3px; height: 1em;
+            background: var(--theme-blue); margin-left: 2px;
+            vertical-align: middle; border-radius: 2px;
+            animation: blink 0.9s step-end infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem; font-weight: 600;
+            color: var(--text-sub); margin: 0; line-height: 1.6;
+        }
+
+        /* ── Pillar 그리드 ── */
+        .pillar-container {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 28px; width: 100%; max-width: 1160px;
+        }
 
         .pillar {
-            background: var(--card-bg); border: 1px solid white; border-radius: 28px; padding: 35px 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03); display: flex; flex-direction: column;
-            backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; position: relative; overflow: hidden;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 28px; padding: 34px 26px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.04);
+            display: flex; flex-direction: column;
+            backdrop-filter: blur(12px);
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            position: relative; overflow: hidden;
         }
-        .pillar::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; transition: 0.4s; opacity: 0.8; }
+
+        /* 상단 컬러 바 */
+        .pillar::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 5px;
+            opacity: 0.85; transition: height 0.35s ease;
+        }
+        .pillar:hover::before { height: 7px; }
+
+        /* 배경 블롭 (각 파트별 분위기) */
+        .pillar::after {
+            content: ''; position: absolute;
+            width: 200px; height: 200px; border-radius: 50%;
+            bottom: -80px; right: -60px;
+            opacity: 0; transition: opacity 0.45s ease;
+            filter: blur(50px); pointer-events: none;
+        }
+        .pillar:hover::after { opacity: 1; }
+
         .pillar:nth-child(1) { animation-delay: 0.1s; }
         .pillar:nth-child(2) { animation-delay: 0.2s; }
         .pillar:nth-child(3) { animation-delay: 0.3s; }
 
+        /* Mint */
         .pillar.theme-mint::before { background: var(--theme-mint); }
-        .pillar.theme-mint:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); }
+        .pillar.theme-mint::after  { background: var(--theme-mint); }
+        .pillar.theme-mint:hover   { transform: translateY(-10px); box-shadow: 0 28px 50px rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.25); }
         .pillar.theme-mint .pillar-header { color: var(--theme-mint); }
-        
+
+        /* Blue */
         .pillar.theme-blue::before { background: var(--theme-blue); }
-        .pillar.theme-blue:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(0, 113, 227, 0.08); border-color: rgba(0, 113, 227, 0.2); }
+        .pillar.theme-blue::after  { background: var(--theme-blue); }
+        .pillar.theme-blue:hover   { transform: translateY(-10px); box-shadow: 0 28px 50px rgba(0,113,227,0.1); border-color: rgba(0,113,227,0.25); }
         .pillar.theme-blue .pillar-header { color: var(--theme-blue); }
-        
+
+        /* Violet */
         .pillar.theme-violet::before { background: linear-gradient(90deg, var(--theme-violet), var(--theme-navy)); }
-        .pillar.theme-violet:hover { transform: translateY(-10px); box-shadow: 0 25px 45px rgba(108, 92, 231, 0.08); border-color: rgba(108, 92, 231, 0.2); }
-        .pillar.theme-violet .pillar-header { background: linear-gradient(90deg, var(--theme-violet), var(--theme-navy)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .pillar-icon { font-size: 2.5rem; margin-bottom: 20px; display: inline-block; }
-        .pillar-header { font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
-        .pillar-title { font-size: 1.4rem; font-weight: 900; margin: 0 0 10px 0; }
-        .pillar-desc { font-size: 0.9rem; font-weight: 600; color: var(--text-sub); line-height: 1.6; margin-bottom: 25px; }
-
-        .step-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; flex: 1; }
-        .step-item {
-            background: #ffffff; border: 1px solid rgba(0,0,0,0.04);
-            padding: 16px; border-radius: 16px; font-weight: 700; font-size: 0.95rem;
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.01);
+        .pillar.theme-violet::after  { background: var(--theme-violet); }
+        .pillar.theme-violet:hover   { transform: translateY(-10px); box-shadow: 0 28px 50px rgba(108,92,231,0.1); border-color: rgba(108,92,231,0.25); }
+        .pillar.theme-violet .pillar-header {
+            background: linear-gradient(90deg, var(--theme-violet), var(--theme-navy));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
-        .step-num { font-size: 0.75rem; font-weight: 900; padding: 4px 8px; border-radius: 6px; margin-right: 10px; }
-        
-        .pillar.theme-mint .step-item:hover { border-color: var(--theme-mint); color: var(--theme-mint); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.1); }
+
+        .pillar-icon { font-size: 2.4rem; margin-bottom: 18px; display: inline-block; }
+        .pillar-header { font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; }
+        .pillar-title { font-size: 1.35rem; font-weight: 900; margin: 0 0 10px; }
+        .pillar-desc { font-size: 0.875rem; font-weight: 500; color: var(--text-sub); line-height: 1.65; margin-bottom: 24px; }
+
+        /* ── Step 아이템 (a 태그로 접근성 개선) ── */
+        .step-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+
+        .step-item {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 14px 16px; border-radius: 16px;
+            font-weight: 700; font-size: 0.92rem;
+            cursor: pointer;
+            /* ✅ FIX: a 태그 스타일 */
+            text-decoration: none; color: var(--text-main);
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .step-item-left { display: flex; align-items: center; gap: 2px; }
+
+        .step-num {
+            font-size: 0.68rem; font-weight: 700; padding: 3px 7px;
+            border-radius: 6px; margin-right: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .step-arrow {
+            font-size: 0.85rem; color: var(--text-sub);
+            transition: transform 0.2s ease;
+        }
+
+        /* 완료 뱃지 */
+        .step-done-badge {
+            font-size: 0.7rem; font-weight: 700; padding: 2px 7px;
+            border-radius: 5px; margin-left: 8px;
+            background: var(--theme-mint-light); color: #047857;
+            display: none;
+        }
+        .step-item.is-done .step-done-badge { display: inline-block; }
+        .step-item.is-done .step-arrow { color: var(--theme-mint); }
+
+        /* Mint steps */
         .pillar.theme-mint .step-num { background: var(--theme-mint-light); color: #047857; }
-        .pillar.theme-blue .step-item:hover { border-color: var(--theme-blue); color: var(--theme-blue); box-shadow: 0 5px 15px rgba(0, 113, 227, 0.1); }
+        .pillar.theme-mint .step-item:hover { border-color: var(--theme-mint); color: var(--theme-mint); box-shadow: 0 5px 18px rgba(16,185,129,0.12); }
+        .pillar.theme-mint .step-item:hover .step-arrow { transform: translateX(4px); color: var(--theme-mint); }
+
+        /* Blue steps */
         .pillar.theme-blue .step-num { background: var(--theme-blue-light); color: #005bb5; }
-        .pillar.theme-violet .step-item:hover { border-color: var(--theme-violet); color: var(--theme-violet); box-shadow: 0 5px 15px rgba(108, 92, 231, 0.1); }
+        .pillar.theme-blue .step-item:hover { border-color: var(--theme-blue); color: var(--theme-blue); box-shadow: 0 5px 18px rgba(0,113,227,0.12); }
+        .pillar.theme-blue .step-item:hover .step-arrow { transform: translateX(4px); color: var(--theme-blue); }
+
+        /* Violet steps */
         .pillar.theme-violet .step-num { background: var(--theme-multi-light); color: #4527a0; }
-        .pillar.theme-violet .step-item.navy-step:hover { border-color: var(--theme-navy); color: var(--theme-navy); box-shadow: 0 5px 15px rgba(30, 55, 153, 0.1); }
+        .pillar.theme-violet .step-item:hover { border-color: var(--theme-violet); color: var(--theme-violet); box-shadow: 0 5px 18px rgba(108,92,231,0.12); }
+        .pillar.theme-violet .step-item:hover .step-arrow { transform: translateX(4px); color: var(--theme-violet); }
+        .pillar.theme-violet .step-item.navy-step:hover { border-color: var(--theme-navy); color: var(--theme-navy); }
         .pillar.theme-violet .step-item.navy-step .step-num { background: #e8eaf6; color: var(--theme-navy); }
 
-        /* ⭐ 저작권 플로팅 아이콘 */
+        /* ════════════════════════════════════════
+           저작권 플로팅 버튼
+        ════════════════════════════════════════ */
         .copyright-btn {
-            position: fixed; bottom: 30px; right: 30px; width: 48px; height: 48px; border-radius: 50%;
-            background: white; border: 1px solid #e5e5e7; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer; font-size: 1.2rem; font-weight: 900; color: var(--text-sub);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 4000; text-decoration: none;
+            position: fixed; bottom: 30px; right: 30px;
+            width: 46px; height: 46px; border-radius: 50%;
+            background: white; border: 1px solid #e5e5e7;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+            cursor: pointer; font-size: 1.15rem; font-weight: 900;
+            color: var(--text-sub);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 4000; text-decoration: none;
         }
-        .copyright-btn:hover { color: var(--theme-blue); border-color: var(--theme-blue); transform: scale(1.1) rotate(10deg); box-shadow: 0 12px 25px rgba(0,113,227,0.15); }
+        .copyright-btn:hover {
+            color: var(--theme-blue); border-color: var(--theme-blue);
+            transform: scale(1.12) rotate(10deg);
+            box-shadow: 0 14px 28px rgba(0,113,227,0.15);
+        }
 
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ⭐ 커스텀 팝업 (모달) 전용 스타일 ⭐ */
+        /* ════════════════════════════════════════
+           모달 — ✅ FIX: visibility 방식으로 교체
+        ════════════════════════════════════════ */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
-            display: none; align-items: center; justify-content: center; z-index: 9999;
-            opacity: 0; transition: opacity 0.3s ease;
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.38);
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+            /* ✅ FIX: display 토글 대신 visibility + opacity */
+            visibility: hidden; pointer-events: none; opacity: 0;
+            transition: opacity 0.28s ease, visibility 0.28s ease;
         }
-        .modal-overlay.show { display: flex; opacity: 1; }
-        
+        .modal-overlay.show {
+            visibility: visible; pointer-events: auto; opacity: 1;
+        }
+
         .modal-box {
-            background: white; border-radius: 24px; padding: 40px; width: 100%; max-width: 420px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15); text-align: center;
-            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: white; border-radius: 24px; padding: 40px;
+            width: 100%; max-width: 430px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+            text-align: center;
+            transform: scale(0.88) translateY(12px);
+            transition: transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(0,0,0,0.05);
         }
-        .modal-overlay.show .modal-box { transform: scale(1); }
-        
-        .modal-icon { font-size: 3rem; margin-bottom: 15px; }
-        .modal-title { font-size: 1.5rem; font-weight: 900; color: var(--text-main); margin: 0 0 15px 0; letter-spacing: -0.03em;}
-        .modal-desc { font-size: 1rem; font-weight: 600; color: var(--text-sub); line-height: 1.6; margin-bottom: 30px; word-break: keep-all;}
-        
+        .modal-overlay.show .modal-box { transform: scale(1) translateY(0); }
+
+        .modal-icon  { font-size: 3rem; margin-bottom: 14px; }
+        .modal-title { font-size: 1.45rem; font-weight: 900; margin: 0 0 14px; letter-spacing: -0.03em; }
+        /* ✅ FIX: 인라인 스타일 대신 클래스로 색상 제어 */
+        .modal-title.type-danger { color: #ff3b30; }
+        .modal-title.type-success { color: var(--theme-mint); }
+        .modal-title.type-info   { color: var(--theme-blue); }
+
+        .modal-desc {
+            font-size: 0.97rem; font-weight: 500; color: var(--text-sub);
+            line-height: 1.65; margin-bottom: 28px; word-break: keep-all;
+        }
+
         .modal-btn-group { display: flex; gap: 10px; justify-content: center; }
         .modal-btn {
-            flex: 1; padding: 14px; border-radius: 14px; font-size: 1.05rem; font-weight: 800;
-            border: none; cursor: pointer; transition: 0.2s;
+            flex: 1; padding: 14px; border-radius: 14px;
+            font-size: 1rem; font-weight: 800;
+            font-family: 'Noto Sans KR', sans-serif;
+            border: none; cursor: pointer; transition: all 0.18s ease;
         }
-        .modal-btn.cancel { background: #f5f5f7; color: var(--text-main); }
-        .modal-btn.cancel:hover { background: #e5e5e7; }
-        .modal-btn.danger { background: #ff3b30; color: white; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); }
-        .modal-btn.danger:hover { background: #d70015; transform: translateY(-2px); }
-        .modal-btn.primary { background: var(--theme-blue); color: white; box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); }
-        .modal-btn.primary:hover { background: #005bb5; color: white; transform: translateY(-2px); }
+        .modal-btn.cancel  { background: #f5f5f7; color: var(--text-main); }
+        .modal-btn.cancel:hover  { background: #e5e5e7; }
+        .modal-btn.danger  { background: #ff3b30; color: white; box-shadow: 0 4px 16px rgba(255,59,48,0.28); }
+        .modal-btn.danger:hover  { background: #d70015; transform: translateY(-2px); }
+        .modal-btn.primary { background: var(--theme-blue); color: white; box-shadow: 0 4px 16px rgba(0,113,227,0.28); }
+        .modal-btn.primary:hover { background: #005bb5; transform: translateY(-2px); }
 
-        /* 반응형 */
+        /* ════════════════════════════════════════
+           키프레임 & 모션 미디어쿼리 (✅ FIX 추가)
+        ════════════════════════════════════════ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+        }
+
+        /* ✅ FIX: 저사양/모션 민감 사용자 배려 */
+        @media (prefers-reduced-motion: reduce) {
+            .pillar, .hero-section { animation: none; opacity: 1; transform: none; }
+            .typed-cursor { animation: none; }
+        }
+
+        /* ════════════════════════════════════════
+           반응형
+        ════════════════════════════════════════ */
         @media (max-width: 1024px) { .pillar-container { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             .pillar-container { grid-template-columns: 1fr; }
             .hero-title { font-size: 2.2rem; }
-            header { padding: 15px 20px; }
+            header { padding: 0 20px; }
+            .hero-section { margin-bottom: 40px; }
         }
     </style>
 </head>
 <body>
 
-    <header>
+<!-- 이진수 ambient 배경 캔버스 -->
+<canvas id="binaryCanvas"></canvas>
+
+<!-- ════════ 헤더 ════════ -->
+<header>
+    <div class="header-main">
         <div class="header-left">
             <span class="target-badge">대상: 중학교 1~3학년</span>
             <h1 class="main-title">데이터 비트박스</h1>
@@ -180,161 +417,342 @@
         <div class="status-controller">
             <button class="status-btn" onclick="openResetModal()">🔄 전체 데이터 초기화</button>
         </div>
-    </header>
-
-    <main>
-        <div class="hero-section">
-            <h2 class="hero-title">컴퓨터는 세상을 <span class="highlight">어떻게 이해할까?</span></h2>
-            <p class="hero-subtitle">올바른 디지털 시민으로 성장하기 위한 첫걸음,<br>현실의 정보가 디지털 코드로 변환되는 마법 같은 과정을 탐구해 보세요.</p>
-        </div>
-
-        <div class="pillar-container">
-            <div class="pillar theme-mint">
-                <div class="pillar-icon">🧱</div>
-                <div class="pillar-header">PART 01. FOUNDATION</div>
-                <h3 class="pillar-title">데이터와 비트</h3>
-                <p class="pillar-desc">현실의 아날로그 정보가 0과 1로 이루어진 디지털 세상의 조각으로 나뉘는 원리를 배웁니다.</p>
-                <ul class="step-list">
-                    <li class="step-item" onclick="location.href='가치_개념.html'">
-                        <div><span class="step-num">STEP 1</span> 디지털 데이터의 가치</div>
-                        <span>➔</span>
-                    </li>
-                    <li class="step-item" onclick="location.href='비트_개념.html'">
-                        <div><span class="step-num">STEP 2</span> 비트(Bit)란?</div>
-                        <span>➔</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="pillar theme-blue">
-                <div class="pillar-icon">🔠</div>
-                <div class="pillar-header">PART 02. NUMBER & TEXT</div>
-                <h3 class="pillar-title">숫자와 문자의 표현</h3>
-                <p class="pillar-desc">우리가 사용하는 숫자와 글자가 컴퓨터의 언어로 어떻게 번역되어 저장되는지 확인합니다.</p>
-                <ul class="step-list">
-                    <li class="step-item" onclick="location.href='숫자_개념.html'">
-                        <div><span class="step-num">STEP 3</span> 숫자의 디지털 표현</div>
-                        <span>➔</span>
-                    </li>
-                    <li class="step-item" onclick="location.href='문자_개념.html'">
-                        <div><span class="step-num">STEP 4</span> 문자의 디지털 표현</div>
-                        <span>➔</span>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="pillar theme-violet">
-                <div class="pillar-icon">🎨</div>
-                <div class="pillar-header">PART 03. MULTIMEDIA</div>
-                <h3 class="pillar-title">멀티미디어의 표현</h3>
-                <p class="pillar-desc">빛의 삼원색과 소리의 파동, 그리고 시간의 흐름이 어떻게 디지털 코드가 되어 처리되는지 알아봅니다.</p>
-                <ul class="step-list">
-                    <li class="step-item" onclick="location.href='이미지_개념.html'">
-                        <div><span class="step-num">STEP 5</span> 이미지의 표현</div>
-                        <span>➔</span>
-                    </li>
-                    <li class="step-item" onclick="location.href='소리_개념.html'">
-                        <div><span class="step-num">STEP 6</span> 소리의 표현</div>
-                        <span>➔</span>
-                    </li>
-                    <li class="step-item navy-step" onclick="location.href='동영상_개념.html'">
-                        <div><span class="step-num">STEP 7</span> 동영상의 표현</div>
-                        <span>➔</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </main>
-
-    <a href="#" class="copyright-btn" title="저작권 안내" onclick="openInfoModal(); return false;">ⓒ</a>
-
-    <div id="customModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-icon" id="modalIcon">⚠️</div>
-            <h3 class="modal-title" id="modalTitle">경고</h3>
-            <p class="modal-desc" id="modalDesc">메시지 내용</p>
-            <div class="modal-btn-group" id="modalButtons">
-                </div>
-        </div>
     </div>
 
-    <script>
-        // --- 커스텀 팝업 시스템 ---
-        const modal = document.getElementById('customModal');
-        const mIcon = document.getElementById('modalIcon');
-        const mTitle = document.getElementById('modalTitle');
-        const mDesc = document.getElementById('modalDesc');
-        const mBtns = document.getElementById('modalButtons');
+    <!-- 전체 학습 진행률 바 -->
+    <div class="progress-bar-wrap">
+        <span class="progress-label">PROGRESS</span>
+        <div class="progress-segments" id="progressSegments"></div>
+        <span class="progress-count" id="progressCount">0 / 7</span>
+    </div>
+</header>
 
-        function closeModal() {
-            modal.classList.remove('show');
-            setTimeout(() => { modal.style.display = 'none'; }, 300); // 페이드아웃 후 숨김
+<!-- ════════ 메인 ════════ -->
+<main>
+    <div class="hero-section">
+        <div class="hero-eyebrow">✦ Digital Literacy Course</div>
+        <h2 class="hero-title">
+            컴퓨터는 세상을<br>
+            <span class="typed-text" id="typedText"></span><span class="typed-cursor"></span>
+        </h2>
+        <p class="hero-subtitle">
+            올바른 디지털 시민으로 성장하기 위한 첫걸음,<br>
+            현실의 정보가 디지털 코드로 변환되는 과정을 탐구해 보세요.
+        </p>
+    </div>
+
+    <div class="pillar-container">
+
+        <!-- PART 01 -->
+        <div class="pillar theme-mint">
+            <div class="pillar-icon">🧱</div>
+            <div class="pillar-header">PART 01 · FOUNDATION</div>
+            <h3 class="pillar-title">데이터와 비트</h3>
+            <p class="pillar-desc">현실의 아날로그 정보가 0과 1로 이루어진 디지털 세상의 조각으로 나뉘는 원리를 배웁니다.</p>
+            <!-- ✅ FIX: onclick 인라인 제거, <a> 태그로 접근성 개선 -->
+            <ul class="step-list">
+                <li>
+                    <a class="step-item" href="가치_개념.html" data-step="1">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 1</span>
+                            디지털 데이터의 가치
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="step-item" href="비트_개념.html" data-step="2">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 2</span>
+                            비트(Bit)란?
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- PART 02 -->
+        <div class="pillar theme-blue">
+            <div class="pillar-icon">🔠</div>
+            <div class="pillar-header">PART 02 · NUMBER &amp; TEXT</div>
+            <h3 class="pillar-title">숫자와 문자의 표현</h3>
+            <p class="pillar-desc">우리가 사용하는 숫자와 글자가 컴퓨터의 언어로 어떻게 번역되어 저장되는지 확인합니다.</p>
+            <ul class="step-list">
+                <li>
+                    <a class="step-item" href="숫자_개념.html" data-step="3">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 3</span>
+                            숫자의 디지털 표현
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="step-item" href="문자_개념.html" data-step="4">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 4</span>
+                            문자의 디지털 표현
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- PART 03 -->
+        <div class="pillar theme-violet">
+            <div class="pillar-icon">🎨</div>
+            <div class="pillar-header">PART 03 · MULTIMEDIA</div>
+            <h3 class="pillar-title">멀티미디어의 표현</h3>
+            <p class="pillar-desc">빛의 삼원색과 소리의 파동, 시간의 흐름이 어떻게 디지털 코드가 되어 처리되는지 알아봅니다.</p>
+            <ul class="step-list">
+                <li>
+                    <a class="step-item" href="이미지_개념.html" data-step="5">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 5</span>
+                            이미지의 표현
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="step-item" href="소리_개념.html" data-step="6">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 6</span>
+                            소리의 표현
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="step-item navy-step" href="동영상_개념.html" data-step="7">
+                        <div class="step-item-left">
+                            <span class="step-num">STEP 7</span>
+                            동영상의 표현
+                            <span class="step-done-badge">✓ 완료</span>
+                        </div>
+                        <span class="step-arrow">→</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</main>
+
+<!-- 저작권 버튼 -->
+<!-- ✅ FIX: onclick return false 제거, addEventListener로 처리 -->
+<a href="#" class="copyright-btn" id="copyrightBtn" title="저작권 안내">ⓒ</a>
+
+<!-- ════════ 모달 ════════ -->
+<!-- ✅ FIX: role="dialog" + aria 속성 추가 -->
+<div id="customModal" class="modal-overlay"
+     role="dialog" aria-modal="true"
+     aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal-box">
+        <div class="modal-icon" id="modalIcon">⚠️</div>
+        <h3 class="modal-title" id="modalTitle">경고</h3>
+        <p class="modal-desc" id="modalDesc">메시지 내용</p>
+        <div class="modal-btn-group" id="modalButtons"></div>
+    </div>
+</div>
+
+<!-- ════════ JavaScript ════════ -->
+<script>
+/* ──────────────────────────────────────────
+   1. 이진수 Ambient 배경 캔버스
+────────────────────────────────────────── */
+(function () {
+    const canvas = document.getElementById('binaryCanvas');
+    const ctx = canvas.getContext('2d');
+    const COLS = 40;
+    let drops = [];
+
+    function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const cols = Math.floor(canvas.width / (canvas.width / COLS));
+        drops = Array.from({ length: cols }, () => Math.random() * -50);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#1d6fc4';
+        ctx.font = '13px JetBrains Mono, monospace';
+        const colW = canvas.width / drops.length;
+        drops.forEach((y, i) => {
+            const bit = Math.random() > 0.5 ? '1' : '0';
+            ctx.fillText(bit, i * colW, y);
+            drops[i] = y > canvas.height + 20 ? -20 : y + 18;
+        });
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    setInterval(draw, 120);
+})();
+
+/* ──────────────────────────────────────────
+   2. Hero 타이핑 효과
+────────────────────────────────────────── */
+(function () {
+    const el   = document.getElementById('typedText');
+    const text = '어떻게 이해할까?';
+    let i = 0;
+    // 페이지 로드 후 0.9초 뒤 시작
+    setTimeout(function type() {
+        if (i <= text.length) {
+            el.textContent = text.slice(0, i++);
+            setTimeout(type, 90);
         }
+    }, 900);
+})();
 
-        // 1. 전체 초기화 '확인' 팝업 띄우기
-        function openResetModal() {
-            mIcon.innerText = "⚠️";
-            mTitle.innerText = "전체 데이터 초기화";
-            mTitle.style.color = "#ff3b30";
-            mDesc.innerHTML = "이 기기에 저장된 <b>'퀴즈 점수', '학습 메모', '소감문' </b>등</b><br>모든 기록이 영구적으로 삭제됩니다.<br><br>데이터를 초기화하시겠습니까?";
-           
-            mBtns.innerHTML = `
-                <button class="modal-btn cancel" onclick="closeModal()">취소</button>
-                <button class="modal-btn danger" onclick="executeReset()">초기화 진행</button>
-            `;
-            
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.add('show'); }, 10);
-        }
+/* ──────────────────────────────────────────
+   3. 진행률 바 & 완료 뱃지
+────────────────────────────────────────── */
+const TOTAL_STEPS = 7;
 
-        // 실제 데이터 삭제 실행 및 성공 팝업
-        function executeReset() {
-            localStorage.clear(); // 데이터 삭제
-            
-            // 삭제 완료 팝업으로 내용 변경
-            mIcon.innerText = "✅";
-            mTitle.innerText = "초기화 완료";
-            mTitle.style.color = "var(--theme-mint)";
-            mDesc.innerHTML = "모든 학습 데이터가 초기화되었습니다.";
-            
-            mBtns.innerHTML = `
-                <button class="modal-btn primary" onclick="location.reload()">확인</button>
-            `;
-        }
+function getCompletedSteps() {
+    const raw = localStorage.getItem('completedSteps');
+    return raw ? JSON.parse(raw) : [];
+}
 
-      // 2. 저작권/안내 '알림' 팝업 띄우기
-        function openInfoModal() {
-            mIcon.innerText = "ⓒ";
-            mTitle.innerText = "저작권 및 출처 안내";
-            mTitle.style.color = "var(--theme-blue)";
-            
-            // 저작권 내용을 깔끔한 HTML 구조로 삽입
-            mDesc.innerHTML = `
-                <div style="text-align: left; font-size: 0.9rem; line-height: 1.6; color: #424245;">
-                    <p style="margin-top:0;">본 <b>'데이터 비트박스'</b> 프로그램은 교육 목적으로 제작되었으며, 외부 유료 이미지 파일을 전혀 사용하지 않은 프로그램입니다.</p>
-                    
-                    <div style="background: #f5f5f7; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                        <strong style="color: var(--theme-blue); font-size: 1rem;">1. 자체 제작 콘텐츠 (100% Coding Art)</strong><br>
-                        스마트 시티, AI 로봇, 소리 파형, 벡터 애플, 동영상 프레임 애니메이션 및 게임 등 모든 인터랙티브 시각 자료는 CSS와 JavaScript Canvas API를 활용해 <b>코드로 드로잉한 순수 창작물</b>입니다.
-                    일부는 Google(Gemini) & OpenAI(Chat GPT) 생성형 시각자료입니다.</div>
+function renderProgress() {
+    const done  = getCompletedSteps();
+    const segs  = document.getElementById('progressSegments');
+    const count = document.getElementById('progressCount');
 
+    segs.innerHTML = '';
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+        const seg = document.createElement('div');
+        seg.className = 'progress-seg' + (done.includes(i) ? ' done' : '');
+        segs.appendChild(seg);
+    }
+    count.textContent = `${done.length} / ${TOTAL_STEPS}`;
 
-                    <div style="background: #f5f5f7; padding: 15px; border-radius: 12px;">
-                        <strong style="color: var(--theme-violet); font-size: 1rem;">2. 오픈소스 라이선스 (Open Source)</strong><br>
-                        • <b>UI 아이콘:</b> Google Material Icons (Apache License 2.0)<br>
-                        • <b>로고 아이콘:</b> Feather Icons (MIT License)<br>
-                        • <b>웹 폰트:</b> Pretendard, JetBrains Mono, Orbitron (OFL)
-                    </div>
+    // 완료 뱃지
+    document.querySelectorAll('.step-item').forEach(item => {
+        const step = parseInt(item.dataset.step);
+        item.classList.toggle('is-done', done.includes(step));
+    });
+}
+
+renderProgress();
+
+/* ──────────────────────────────────────────
+   4. 모달 시스템 (✅ 전면 수정)
+   - visibility 방식 (display 토글 제거)
+   - 인라인 style.color 제거 → 클래스 제어
+   - 오버레이 클릭으로 닫기 (위험 모달 제외)
+────────────────────────────────────────── */
+const modal  = document.getElementById('customModal');
+const mIcon  = document.getElementById('modalIcon');
+const mTitle = document.getElementById('modalTitle');
+const mDesc  = document.getElementById('modalDesc');
+const mBtns  = document.getElementById('modalButtons');
+
+function openModal({ icon, title, titleType, descHTML, buttonsHTML, preventOverlayClose = false }) {
+    // ✅ FIX: 이전 상태 완전 초기화
+    mTitle.className = 'modal-title' + (titleType ? ` type-${titleType}` : '');
+    mIcon.textContent  = icon;
+    mTitle.textContent = title;
+    mDesc.innerHTML    = descHTML;
+    mBtns.innerHTML    = buttonsHTML;
+    modal.dataset.preventClose = preventOverlayClose ? 'true' : '';
+    modal.classList.add('show');
+    // 첫 번째 버튼에 포커스
+    const firstBtn = mBtns.querySelector('button');
+    if (firstBtn) setTimeout(() => firstBtn.focus(), 50);
+}
+
+function closeModal() {
+    modal.classList.remove('show');
+}
+
+// ✅ FIX: 오버레이 배경 클릭으로 닫기
+modal.addEventListener('click', (e) => {
+    if (e.target === modal && !modal.dataset.preventClose) closeModal();
+});
+
+// ESC 키로도 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+});
+
+/* ── 초기화 확인 모달 ── */
+function openResetModal() {
+    openModal({
+        icon: '⚠️',
+        title: '전체 데이터 초기화',
+        titleType: 'danger',
+        // ✅ FIX: 중복 </b> 태그 제거
+        descHTML: `이 기기에 저장된 <b>'퀴즈 점수', '학습 메모', '소감문'</b> 등<br>모든 기록이 영구적으로 삭제됩니다.<br><br>데이터를 초기화하시겠습니까?`,
+        buttonsHTML: `
+            <button class="modal-btn cancel" onclick="closeModal()">취소</button>
+            <button class="modal-btn danger" onclick="executeReset()">초기화 진행</button>
+        `,
+        preventOverlayClose: true  // 실수 방지: 배경 클릭 차단
+    });
+}
+
+/* ── 실제 초기화 실행 ── */
+function executeReset() {
+    localStorage.clear();
+    // ✅ FIX: location.reload() 대신 UI만 갱신
+    renderProgress();
+
+    openModal({
+        icon: '✅',
+        title: '초기화 완료',
+        titleType: 'success',
+        descHTML: '모든 학습 데이터가 초기화되었습니다.',
+        buttonsHTML: `<button class="modal-btn primary" onclick="closeModal()">확인</button>`,
+        preventOverlayClose: false
+    });
+}
+
+/* ── 저작권 안내 모달 ── */
+function openInfoModal() {
+    openModal({
+        icon: 'ⓒ',
+        title: '저작권 및 출처 안내',
+        titleType: 'info',
+        descHTML: `
+            <div style="text-align:left;font-size:0.88rem;line-height:1.65;color:#424245;">
+                <p style="margin-top:0;">본 <b>'데이터 비트박스'</b>는 교육 목적으로 제작되었으며,
+                외부 유료 이미지를 전혀 사용하지 않은 프로그램입니다.</p>
+                <div style="background:#f5f5f7;padding:14px;border-radius:12px;margin-bottom:12px;">
+                    <strong style="color:var(--theme-blue);font-size:0.95rem;">1. 자체 제작 콘텐츠 (100% Coding Art)</strong><br>
+                    모든 인터랙티브 시각 자료는 CSS와 JavaScript Canvas API를 활용해
+                    <b>코드로 드로잉한 순수 창작물</b>입니다.
+                    일부는 Google(Gemini) &amp; OpenAI(ChatGPT) 생성형 시각자료입니다.
                 </div>
-            `;
-            
-            mBtns.innerHTML = `
-                <button class="modal-btn primary" onclick="closeModal()">확인했습니다</button>
-            `;
-            
-            modal.style.display = 'flex';
-            setTimeout(() => { modal.classList.add('show'); }, 10);
-        }
-    </script>
+                <div style="background:#f5f5f7;padding:14px;border-radius:12px;">
+                    <strong style="color:var(--theme-violet);font-size:0.95rem;">2. 오픈소스 라이선스 (Open Source)</strong><br>
+                    • <b>UI 아이콘:</b> Google Material Icons (Apache License 2.0)<br>
+                    • <b>로고 아이콘:</b> Feather Icons (MIT License)<br>
+                    • <b>웹 폰트:</b> Noto Sans KR, JetBrains Mono (OFL)
+                </div>
+            </div>
+        `,
+        buttonsHTML: `<button class="modal-btn primary" onclick="closeModal()">확인했습니다</button>`,
+        preventOverlayClose: false
+    });
+}
+
+/* ── 저작권 버튼 이벤트 (✅ inline onclick 제거) ── */
+document.getElementById('copyrightBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    openInfoModal();
+});
+</script>
 </body>
 </html>
