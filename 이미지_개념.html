@@ -227,8 +227,8 @@
         input[type=range] { width: 90%; cursor: pointer !important; accent-color: var(--multi-violet); margin-bottom: 12px; }
         .res-display { font-size:1rem; font-weight:800; background: var(--menu-active-bg); padding: 6px 20px; border-radius: 20px; color: var(--menu-active-text); margin: 0; }
         
-        .result-canvas-wrapper { width: 300px; height: 300px; border: 4px solid white; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAOklEQVQYV2NkYGAwYkAD////Z4QxMAAZEBvGQpIMkGkwDUhT4TIZpGHI2A3ERcMQQwDZY2QgGEYVQQBybQkH9Lg1sQAAAABJRU5ErkJggg=='); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
-        #resultCanvas { width: 100%; height: 100%; image-rendering: pixelated; }
+        .result-canvas-wrapper { width: 300px; height: 300px; border: 4px solid white; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); background-color: #ffffff; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M 20 0 L 0 0 0 20' fill='none' stroke='%23d8d8e8' stroke-width='1'/%3E%3C/svg%3E"); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+        #resultCanvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
 
         /* 비트맵 암호 해독기 (Step 4) */
         .decoder-area { display: flex; gap: 20px; width: 100%; align-items: stretch; margin-top: 15px; }
@@ -532,7 +532,7 @@
                     <div style="width: 100%; text-align: left; margin-bottom: 20px;">
                         <div class="mode-selector">
                             <button class="mode-btn active" id="modeCustom" onclick="switchMode('custom')">✏️ 내가 그린 픽셀 아트 (최대 50x50)</button>
-                            <button class="mode-btn" id="modeHD" onclick="switchMode('hd')">✨ 고해상도 매끄러운 이미지 (비교용)</button>
+                            <button class="mode-btn" id="modeHD" onclick="switchMode('hd')">✨ 고해상도 비트맵 원본 (계단현상 비교용)</button>
                         </div>
                     </div>
 
@@ -547,8 +547,8 @@
                                     <button class="action-btn" onclick="makeGrid()">생성</button>
                                 </div>
                                 <div id="hdSettings" style="display: none; width: 100%;">
-                                    <h3 style="margin: 0 0 5px 0; color: var(--text-main); font-size: 1.05rem;">고해상도 원본 (Vector) 모드</h3>
-                                    <p style="margin: 0; font-size: 0.85rem; color: #666; font-weight: 600;">계단 현상이 전혀 없는 매끄러운 벡터 이미지입니다.</p>
+                                    <h3 style="margin: 0 0 5px 0; color: var(--text-main); font-size: 1.05rem;">고해상도 비트맵 원본 모드</h3>
+                                    <p style="margin: 0; font-size: 0.85rem; color: #666; font-weight: 600;">슬라이더로 픽셀 수를 줄이면 계단 현상(깨짐)이 발생합니다.<br>※ 벡터 방식과의 차이는 5단계 실습에서 확인하세요!</p>
                                 </div>
                             </div>
 
@@ -569,9 +569,11 @@
                                 </div>
                             </div>
 
-                            <div id="hdUI" style="display: none; width: 100%; height: 300px; flex-direction: column; align-items: center; justify-content: center; background: white; border: 2px solid #adb5bd; border-radius: 8px;">
-                                <canvas id="leftHdCanvas" width="150" height="150" style="margin-bottom: 15px;"></canvas>
-                                <p style="color:#666; font-size: 0.95rem; font-weight: 600; line-height: 1.6; text-align: center;">우측 패널의 해상도를 낮추며<br>비트맵의 한계(계단 현상)를 확인하세요!</p>
+                            <div id="hdUI" style="display: none; width: 100%; height: auto; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+                                <div style="width:300px; height:300px; border:4px solid white; border-radius:8px; box-shadow:0 10px 20px rgba(0,0,0,0.05); background-color:#ffffff; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cpath d='M 20 0 L 0 0 0 20' fill='none' stroke='%23d8d8e8' stroke-width='1'/%3E%3C/svg%3E"); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden;">
+                                    <canvas id="leftHdCanvas" width="300" height="300" style="width:100%; height:100%;"></canvas>
+                                </div>
+                                <p style="color:#6c5ce7; font-size: 0.85rem; font-weight: 800; background:#f8f6ff; padding:8px 16px; border-radius:20px; border:1px solid rgba(108,92,231,0.2); margin:0; text-align:center; line-height:1.6;">📌 원본 (300 × 300px 비트맵)</p>
                             </div>
                         </div>
 
@@ -848,11 +850,6 @@
             document.body.className = ''; 
             if(status === 'help') document.body.classList.add('status-help');
             if(status === 'done') document.body.classList.add('status-done');
-            // ✨ [메인 연동] 상태 localStorage 저장
-            try {
-                if(status === 'normal') localStorage.removeItem('status_step' + (typeof THIS_STEP !== 'undefined' ? THIS_STEP : ''));
-                else localStorage.setItem('status_step' + (typeof THIS_STEP !== 'undefined' ? THIS_STEP : ''), status);
-            } catch(e) {}
         }
 
         const today = new Date().getDate(); 
@@ -1094,14 +1091,14 @@
                 makeGrid();
             } else {
                 document.getElementById('modeHD').classList.add('active');
-                descText.innerHTML = "'고해상도 매끄러운 이미지' 모드를 선택하고 우측 슬라이더를 조절하며 계단 현상을 정밀하게 관찰해 보세요.";
+                descText.innerHTML = "'고해상도 비트맵 원본' 모드입니다. 원본은 고해상도 <b>비트맵</b>으로 저장된 이미지입니다. 우측 슬라이더로 해상도(픽셀 수)를 줄여가며 <b>계단 현상</b>이 나타나는 과정을 관찰하세요.";
                 
                 document.getElementById('customSettings').style.display = 'none';
                 document.getElementById('hdSettings').style.display = 'block';
                 document.getElementById('customUI').style.display = 'none';
                 document.getElementById('hdUI').style.display = 'flex';
                 
-                document.getElementById('resSlider').max = 300; 
+                document.getElementById('resSlider').max = 300;
                 document.getElementById('resSlider').value = 300;
                 
                 drawAppleOnLeft(); 
@@ -1128,8 +1125,8 @@
         function drawAppleOnLeft() {
             const c = document.getElementById('leftHdCanvas');
             const ctx = c.getContext('2d');
-            ctx.clearRect(0,0,150,150);
-            drawBeautifulApple(ctx, 75, 75, 0.65); 
+            ctx.clearRect(0,0,300,300);
+            drawBeautifulApple(ctx, 150, 150, 1.3); 
         }
 
         function updateColorBin() {
@@ -1203,9 +1200,12 @@
             rCtx.imageSmoothingEnabled = false; 
 
             const sliderVal = parseInt(document.getElementById('resSlider').value);
-            document.getElementById('resValueDisplay').innerText = `현재 디스플레이 해상도: ${sliderVal} x ${sliderVal}`;
+            const modeLabel = currentMode === 'hd'
+                ? `비트맵 해상도: ${sliderVal} x ${sliderVal}px\n(원본 300x300에서 다운샘플링)`
+                : `현재 디스플레이 해상도: ${sliderVal} x ${sliderVal} 픽셀`;
+            document.getElementById('resValueDisplay').innerHTML = modeLabel.replace('\n', '<br>');
 
-            rCtx.fillStyle = '#ffffff'; rCtx.fillRect(0, 0, 300, 300);
+            rCtx.clearRect(0, 0, 300, 300); // 캔버스 투명하게 → 래퍼 픽셀 그리드 배경 보임
 
             const downCanvas = document.createElement('canvas');
             downCanvas.width = sliderVal; downCanvas.height = sliderVal;
@@ -1387,24 +1387,6 @@
         const totalQuestions = 6; 
         const scored = new Set();
 
-        // ✨ [메인 연동] 현재 스텝 번호 및 합격 기준 점수 설정
-        const THIS_STEP = 5; // 이미지_개념은 5단계
-        const PASS_SCORE = 70; // 70점 이상이면 완료 처리
-
-        // ✨ [메인 연동] 로컬 스토리지에 완료 상태 저장 함수
-        function markStepDone(finalScore) {
-            if (finalScore < PASS_SCORE) return;
-            try {
-                const done = JSON.parse(localStorage.getItem('completedSteps') || '[]');
-                if (!done.includes(THIS_STEP)) {
-                    done.push(THIS_STEP);
-                    localStorage.setItem('completedSteps', JSON.stringify(done));
-                }
-                localStorage.setItem('score_step' + THIS_STEP, finalScore);
-                localStorage.setItem('score_step' + THIS_STEP + '_date', new Date().toLocaleDateString('ko-KR'));
-            } catch(e) { console.warn('저장 실패:', e); }
-        }
-
         function startQuizTimer() {
             isQuizStarted = true;
             document.getElementById('startQuizBtn').style.display = 'none';
@@ -1493,10 +1475,7 @@
         function showSuccess() {
             const m = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
             const s = String(elapsedSeconds % 60).padStart(2, '0');
-            const finalScore = score;
-
-            // ✨ [메인 연동] 70점 이상이면 completedSteps에 저장 → index.html 진행률 바 반영
-            markStepDone(finalScore);
+            const finalScore = score; 
 
             const content = document.getElementById('modalContent');
             content.innerHTML = `
@@ -1560,11 +1539,11 @@
                         <p>▶ 퀴즈 풀이 시간: <span class="highlight">${timeStr}</span></p>
                     </div>
                     <div class="section">
-                        <h2>📌 배움 노트</h2>
+                        <h2>📌 학습 메모장</h2>
                         <div class="text-box">${memo}</div>
                     </div>
                     <div class="section">
-                        <h2>🌿 배움 활동 소감</h2>
+                        <h2>🌿 학습 활동 소감</h2>
                         <div class="text-box">${reflection}</div>
                     </div>
                     <div class="footer">본 리포트는 '데이터 비트박스' 시스템에서 자동 생성되었습니다.</div>
@@ -1709,17 +1688,6 @@
         }
 
         window.onload = function() {
-            // ✨ [메인 연동] 저장된 상태 복원
-            try {
-                const savedStatus = localStorage.getItem('status_step' + THIS_STEP);
-                if(savedStatus) document.body.classList.add('status-' + savedStatus);
-                const done = JSON.parse(localStorage.getItem('completedSteps') || '[]');
-                if(done.includes(THIS_STEP)) {
-                    const activeMenu = document.querySelector('.menu-link.active');
-                    if(activeMenu) activeMenu.textContent += ' ✓';
-                }
-            } catch(e) {}
-
             const wordBank = document.querySelector('.word-bank');
             if(wordBank) {
                 for (let i = wordBank.children.length; i >= 0; i--) {
