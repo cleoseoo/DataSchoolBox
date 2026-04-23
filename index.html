@@ -593,8 +593,8 @@
         #tb-body::before {
             content: ''; position: absolute;
             top: 44%; left: 0; right: 0; height: 4px;
-            background: #ffd700;
-            box-shadow: 0 0 10px rgba(255,215,0,0.6);
+            background: var(--tb-stripe, #ffd700);
+            box-shadow: 0 0 10px var(--tb-stripe-glow, rgba(255,215,0,0.6));
         }
         /* 자물쇠 */
         #tb-lock {
@@ -1235,24 +1235,70 @@ document.getElementById('copyBtn').addEventListener('click',e=>{ e.preventDefaul
 
             // STEP별 상자 색 + 라벨 대비색 변형
             const s = this.dataset.step;
+            // 상자 스타일 초기화 (매번 클릭 시 리셋)
+            const tbBody = document.getElementById('tb-body');
+            const tbLid  = document.getElementById('tb-lid');
+            const tbLock = document.getElementById('tb-lock');
+            tbBody.style.background = ''; tbBody.style.borderColor = ''; tbBody.style.boxShadow = '';
+            tbLid.style.background  = ''; tbLid.style.borderColor  = ''; tbLid.style.boxShadow  = '';
+            tbLock.style.background = ''; tbLock.style.borderColor = ''; tbLock.style.boxShadow = '';
+            // 가로줄 황금색으로 초기화
+            tbBody.style.setProperty('--tb-stripe', '#ffd700');
+            tbBody.style.setProperty('--tb-stripe-glow', 'rgba(255,215,0,0.6)');
+
+            // hue-rotate 완전 제거 → 모든 STEP 직접 색상 지정 (가로줄 황금색 보존)
+            box.style.filter = 'none';
+
             if (s === '1' || s === '2') {
-                // 가치·비트: 민트 상자 → 흰색 글자 (어두운 그림자로 대비)
-                box.style.filter = 'hue-rotate(150deg) saturate(1.5) brightness(1.05)';
+                // 가치·비트: 민트
+                tbBody.style.background = 'linear-gradient(145deg, #006b54, #004d3a, #003326)';
+                tbBody.style.borderColor = '#00f5c4';
+                tbBody.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(0,245,196,0.15)';
+                tbLid.style.background = 'linear-gradient(145deg, #00a884, #006b54, #004d3a)';
+                tbLid.style.borderColor = '#00f5c4';
+                tbLid.style.boxShadow = '0 0 25px rgba(0,245,196,0.5), inset 0 3px 10px rgba(255,255,255,0.15)';
+                tbLock.style.background = 'radial-gradient(circle at 35% 30%, #00f5c4, #00a884, #006b54)';
+                tbLock.style.borderColor = '#00f5c4';
+                tbLock.style.boxShadow = '0 0 16px rgba(0,245,196,0.7), inset 0 2px 6px rgba(255,255,255,0.3)';
                 label.style.color = '#ffffff';
                 label.style.textShadow = '0 0 8px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8)';
             } else if (s === '3' || s === '4') {
-                // 숫자·문자: 파랑 상자 → 흰색 글자
-                box.style.filter = 'hue-rotate(200deg) saturate(1.4) brightness(1.05)';
+                // 숫자·문자: 파랑
+                tbBody.style.background = 'linear-gradient(145deg, #1565c0, #0d47a1, #082a6b)';
+                tbBody.style.borderColor = '#5ac8fa';
+                tbBody.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(90,200,250,0.15)';
+                tbLid.style.background = 'linear-gradient(145deg, #1e88e5, #1565c0, #0d47a1)';
+                tbLid.style.borderColor = '#5ac8fa';
+                tbLid.style.boxShadow = '0 0 25px rgba(90,200,250,0.5), inset 0 3px 10px rgba(255,255,255,0.15)';
+                tbLock.style.background = 'radial-gradient(circle at 35% 30%, #90caf9, #1e88e5, #0d47a1)';
+                tbLock.style.borderColor = '#5ac8fa';
+                tbLock.style.boxShadow = '0 0 16px rgba(90,200,250,0.7), inset 0 2px 6px rgba(255,255,255,0.3)';
                 label.style.color = '#ffffff';
                 label.style.textShadow = '0 0 8px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.8)';
             } else if (s === '5' || s === '6') {
-                // 이미지·소리: 바이올렛 상자 → 순백 글자
-                box.style.filter = 'hue-rotate(260deg) saturate(1.4)';
+                // 이미지·소리: 바이올렛
+                tbBody.style.background = 'linear-gradient(145deg, #6a1b9a, #4a148c, #2d0060)';
+                tbBody.style.borderColor = '#d08ef7';
+                tbBody.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(191,90,242,0.15)';
+                tbLid.style.background = 'linear-gradient(145deg, #8e24aa, #6a1b9a, #4a148c)';
+                tbLid.style.borderColor = '#d08ef7';
+                tbLid.style.boxShadow = '0 0 25px rgba(191,90,242,0.5), inset 0 3px 10px rgba(255,255,255,0.15)';
+                tbLock.style.background = 'radial-gradient(circle at 35% 30%, #d08ef7, #8e24aa, #6a1b9a)';
+                tbLock.style.borderColor = '#d08ef7';
+                tbLock.style.boxShadow = '0 0 16px rgba(191,90,242,0.7), inset 0 2px 6px rgba(255,255,255,0.3)';
                 label.style.color = '#ffffff';
                 label.style.textShadow = '0 0 8px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9)';
             } else {
-                // 동영상(7): 그레이-네이비 상자 → 순백 글자
-                box.style.filter = 'hue-rotate(210deg) saturate(0.5) brightness(0.85)';
+                // 동영상(7): 그레이-네이비
+                tbBody.style.background = 'linear-gradient(145deg, #2c3e6b, #192a56, #0f1a3a)';
+                tbBody.style.borderColor = '#487eb0';
+                tbBody.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(72,126,176,0.15)';
+                tbLid.style.background = 'linear-gradient(145deg, #3d5a8a, #2c3e6b, #192a56)';
+                tbLid.style.borderColor = '#487eb0';
+                tbLid.style.boxShadow = '0 0 25px rgba(72,126,176,0.5), inset 0 3px 10px rgba(255,255,255,0.15)';
+                tbLock.style.background = 'radial-gradient(circle at 35% 30%, #a8c4e0, #487eb0, #2c3e6b)';
+                tbLock.style.borderColor = '#487eb0';
+                tbLock.style.boxShadow = '0 0 16px rgba(72,126,176,0.7), inset 0 2px 6px rgba(255,255,255,0.3)';
                 label.style.color = '#ffffff';
                 label.style.textShadow = '0 0 8px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.9)';
             }
