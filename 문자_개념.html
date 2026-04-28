@@ -141,10 +141,10 @@
         .key-btn.korean.pressed { background: var(--indigo-blue); border-color: var(--indigo-blue); box-shadow: 0 4px 0 #4338ca; color: white; }
 
         .process-arrow { font-size: 2rem; color: #a1a1a6; font-weight: 900; }
-        .process-box { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; padding: 15px; border-radius: 16px; border: 1.5px dashed rgba(0,113,227,0.3); min-width: 110px; height: 90px; position: relative; overflow: hidden; }
-        .process-label { font-size: 0.8rem; font-weight: 800; color: var(--apple-blue); margin-bottom: 8px; }
+        .process-box { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; padding: 15px; border-radius: 16px; border: 1.5px dashed rgba(0,113,227,0.3); min-width: 120px; min-height: 130px; position: relative; }
+        .process-label { font-size: 0.85rem; font-weight: 800; color: var(--apple-blue); margin-bottom: 8px; }
         .process-value { font-size: 1.8rem; font-weight: 900; font-family: 'JetBrains Mono'; color: var(--text-main); }
-        .bin-value { font-size: 1.3rem; color: var(--ocean-blue); letter-spacing: 2px; }
+        .bin-value { font-size: 1.1rem; color: var(--ocean-blue); letter-spacing: 1px; line-height: 1.8; text-align: center; }
 
         .pop-anim { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block;}
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -345,12 +345,12 @@
                         
                         <div class="converter-container">
                             <div class="keyboard-area">
-                                <div class="key-btn" onclick="typeChar(this, 'A', 65, '01000001')">A</div>
-                                <div class="key-btn" onclick="typeChar(this, 'a', 97, '01100001')">a</div>
-                                <div class="key-btn" onclick="typeChar(this, '1', 49, '00110001')" title="숫자가 아닌 '문자' 1">1</div>
-                                <div class="key-btn" onclick="typeChar(this, '!', 33, '00100001')">!</div>
-                                <div class="key-btn korean" onclick="typeChar(this, '정', 'U+C815', '11101100 10100000 10010101')">정</div>
-                                <div class="key-btn korean" onclick="typeChar(this, '보', 'U+BCF4', '11101011 10110011 10110100')">보</div>
+                                <div class="key-btn" onclick="typeChar(this, 'A', '65', '01000001', 'ASCII')">A</div>
+                                <div class="key-btn" onclick="typeChar(this, 'a', '97', '01100001', 'ASCII')">a</div>
+                                <div class="key-btn" onclick="typeChar(this, '1', '49', '00110001', 'ASCII')" title="숫자가 아닌 '문자' 1">1</div>
+                                <div class="key-btn" onclick="typeChar(this, '!', '33', '00100001', 'ASCII')">!</div>
+                                <div class="key-btn korean" onclick="typeChar(this, '정', 'U+C815', '11101100 10100000 10010101', 'Unicode')">정</div>
+                                <div class="key-btn korean" onclick="typeChar(this, '보', 'U+BCF4', '11101011 10110011 10110100', 'Unicode')">보</div>
                             </div>
 
                             <div class="process-arrow">➡️</div>
@@ -363,14 +363,14 @@
                             <div class="process-arrow">➡️</div>
 
                             <div class="process-box">
-                                <div class="process-label">약속된 번호<br>(아스키코드)</div>
-                                <div class="process-value" id="dispDec" style="color:var(--apple-blue);">-</div>
+                                <div class="process-label" id="codeStandardLabel" style="transition: color 0.3s;">약속된 번호표</div>
+                                <div class="process-value" id="dispDec" style="color:var(--apple-blue); transition: color 0.3s;">-</div>
                             </div>
 
                             <div class="process-arrow">➡️</div>
 
-                            <div class="process-box" style="flex: 1.5;">
-                                <div class="process-label">컴퓨터 이진수<br>(UTF-8)</div>
+                            <div class="process-box" style="flex: 2;">
+                                <div class="process-label">컴퓨터가 기억하는 이진수</div>
                                 <div class="process-value bin-value" id="dispBin">-</div>
                             </div>
                         </div>
@@ -399,7 +399,7 @@
 
                             <strong>✅ UTF-8:</strong> 유니코드 번호를 컴퓨터가 실제로 저장할 수 있는 <b>이진수로 변환(인코딩)</b>하는 가장 대표적인 방식입니다. <br>
                             &nbsp;&nbsp;&nbsp;&nbsp;글자의 종류에 따라 <b>1바이트에서 최대 <button class="inline-reveal-btn purple" onclick="revealInline(this, '4바이트(32비트)', 'var(--indigo-blue)', '#e0e7ff')">❓ 확인</button>까지 고무줄처럼 용량을 늘려 쓰기 때문에</b> 전 세계 표준으로 쓰입니다.<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(영어는 1바이트, 한글은 3바이트(24비트), 이모티콘은 4바이트!)</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 0.9em; color:var(--text-sub); font-weight: 500;">(영어는 1바이트, 한글은 3바이트(24비트), 이모티콘은 4바이트)</span>
                         </p>
                     </div>
 
@@ -712,19 +712,21 @@
             }, 400); 
         }
 
-        // 1단계: 문자 변환기 애니메이션
-        function typeChar(btnEl, char, dec, bin) {
+        // ✅ 1단계: 문자 변환기 (ASCII / Unicode 구별 적용됨!)
+        function typeChar(btnEl, char, dec, bin, standard) {
             document.querySelectorAll('.key-btn').forEach(btn => btn.classList.remove('pressed'));
             btnEl.classList.add('pressed');
 
             const elChar = document.getElementById('dispChar');
             const elDec = document.getElementById('dispDec');
             const elBin = document.getElementById('dispBin');
+            const elStdLabel = document.getElementById('codeStandardLabel'); 
 
-            [elChar, elDec, elBin].forEach(el => {
-                el.classList.remove('pop-anim');
-                el.innerText = '-'; 
+            [elChar, elDec, elBin, elStdLabel].forEach(el => {
+                if(el) { el.classList.remove('pop-anim'); }
             });
+            elChar.innerText = '-'; elDec.innerText = '-'; elBin.innerText = '-';
+            if(elStdLabel) elStdLabel.innerHTML = '약속된 번호표';
 
             setTimeout(() => {
                 elChar.innerText = `'${char}'`;
@@ -732,12 +734,19 @@
             }, 50);
 
             setTimeout(() => {
+                if(standard === 'ASCII') {
+                    elStdLabel.innerHTML = '<span style="color:#0284c7;">🇺🇸 아스키코드</span>';
+                } else {
+                    elStdLabel.innerHTML = '<span style="color:#10b981;">🌍 유니코드</span>';
+                }
+                elStdLabel.classList.add('pop-anim');
                 elDec.innerText = dec;
+                elDec.style.color = standard === 'ASCII' ? 'var(--ocean-blue)' : 'var(--success-green)';
                 elDec.classList.add('pop-anim');
             }, 300);
 
             setTimeout(() => {
-                elBin.innerText = bin;
+                elBin.innerHTML = bin.includes(' ') ? bin.replace(/ /g, '<br>') : bin;
                 elBin.style.fontSize = bin.length > 8 ? '1.1rem' : '1.3rem';
                 elBin.classList.add('pop-anim');
             }, 600);
